@@ -1,3 +1,4 @@
+import Script from "next/script";
 import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
@@ -21,6 +22,22 @@ export default function Document() {
           name="keywords"
           content="manicure, pedicure, uñas, nails, salón de uñas, esmaltado, nail art, spa de uñas, uñas acrílicas, cuidado de uñas, belleza de manos y pies"
         />
+
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-F5FWYBYZRT"
+        ></script>
+
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-F5FWYBYZRT', {
+            page_path: window.location.pathname,
+          });
+        `}
+        </Script>
       </Head>
       <body>
         <Main />

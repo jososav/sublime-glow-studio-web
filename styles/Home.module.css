@@ -1,3 +1,7 @@
 .wrapper {
-  text-align: justify; 
+  text-align: justify;
+}
+
+.link {
+  color: blue;
 }

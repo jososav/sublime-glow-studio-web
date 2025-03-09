@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import styles from "../styles/Home.module.css";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -33,7 +34,11 @@ export default function Home() {
         esmalte tradicional o gel (semipermanente).
       </p>
 
-      <h2>Reserva tu cita y luce unas uñas perfectas</h2>
+      <Link href="/appointments">
+        <h2 className={styles.link}>
+          Reserva tu cita y luce unas uñas perfectas
+        </h2>
+      </Link>
     </section>
   );
 }

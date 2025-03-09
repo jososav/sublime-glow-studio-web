@@ -141,11 +141,7 @@ const Service = ({ setSelectedService, selectedService }) => {
   return (
     <div>
       <label>Producto:</label>
-      <select
-        defaultValue=""
-        value={selectedService.id}
-        onChange={handleProductoChange}
-      >
+      <select value={selectedService.id} onChange={handleProductoChange}>
         <option value="" disabled>
           Selecciona un producto
         </option>
