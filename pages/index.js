@@ -10,6 +10,7 @@ export default function Home() {
       <Image
         style={{ borderRadius: "50%" }}
         src="/manipedi.jpg"
+        alt="manipedi"
         width="300"
         height="300"
       />

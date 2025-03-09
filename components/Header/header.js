@@ -10,6 +10,7 @@ const Header = () => {
         <Image
           style={{ borderRadius: "50%" }}
           src="/logo.jpeg"
+          alt="logo"
           width="300"
           height="300"
         />
