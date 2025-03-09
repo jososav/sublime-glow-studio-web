@@ -1,0 +1,9 @@
+.wrapper {
+  padding: 30px;
+  text-align: center;
+  background-color: var(--malta);
+}
+
+.content {
+  padding: 0 15px;
+}
