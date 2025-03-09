@@ -1,4 +1,14 @@
 .header nav {
-  text-align: center;
+  display: flex;
+  align-items: flex-start;
   background-color: var(--malta);
+  justify-content: space-between;
+}
+
+.profileIcon {
+  padding: 20px;
+}
+
+.profileIcon * {
+  cursor: pointer;
 }

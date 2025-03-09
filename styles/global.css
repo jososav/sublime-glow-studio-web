@@ -1,6 +1,6 @@
 :root {
-  --cotton-candy: #ffb4ec;
   --malta: #bcaca1;
+  --cotton-candy: #ffb4ec;
 }
 
 html,
@@ -25,4 +25,9 @@ p {
 img {
   max-width: 100%;
   height: auto;
+}
+
+button {
+  border: none;
+  background: none;
 }

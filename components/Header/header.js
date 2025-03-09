@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import ProfileIcon from "../../containers/ProfileIcon/profileIcon";
 import styles from "./header.module.css";
 
 const Header = () => {
@@ -12,6 +13,9 @@ const Header = () => {
           width="300"
           height="300"
         />
+        <span className={styles.profileIcon}>
+          <ProfileIcon />
+        </span>
       </nav>
     </header>
   );
