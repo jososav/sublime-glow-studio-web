@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FiUser } from "react-icons/fi";
 
 import styles from "./profileIcon.module.css";
@@ -13,10 +14,10 @@ export default function Login() {
       <Avatar user={user} />
     </button>
   ) : (
-    <button onClick={signInWithGoogle}>
+    <Link href={"signin"}>
       <div className={styles.wrapper}>
         <FiUser size={20} />
       </div>
-    </button>
+    </Link>
   );
 }

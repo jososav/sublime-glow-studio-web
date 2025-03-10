@@ -11,6 +11,7 @@ const _getInitials = (name) => {
 };
 
 const Avatar = ({ user }) => {
+  console.log(user.displayName, 'user')
   return (
     <div className="avatar">
       {user?.photoURL ? (
