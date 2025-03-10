@@ -6,3 +6,23 @@
   border-radius: 5px;
   background: var(--cotton-candy);
 }
+
+.product {
+  gap: 10px;
+  width: 200px;
+  display: flex;
+  margin-bottom: 10px;
+  flex-direction: column;
+}
+
+.calendar {
+  gap: 10px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.calendar div input {
+  width: 200px;
+}

@@ -2,7 +2,7 @@ import DatePicker from "react-datepicker";
 import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { getDayName } from "../../helpers/time";
+import { getDayName, toAmPm } from "../../helpers/time";
 import styles from "./calendarBooking.module.css";
 import { formatCurrency } from "../../helpers/currency";
 import { fetchServices } from "../../data/services/services";
@@ -58,7 +58,7 @@ const Time = ({
         appointments
       )
     );
-  }, [appointments]);
+  }, [appointments, selectedService]);
 
   useEffect(() => {
     getAppointmentsForDay(selectedDate).then((data) => {
@@ -88,7 +88,7 @@ const Time = ({
               marginRight: "5px",
             }}
           >
-            {slot}
+            {toAmPm(slot)}
           </li>
         ))}
       </ul>
@@ -105,7 +105,7 @@ const Calendar = ({
   if (!selectedService.id) return null;
 
   return (
-    <div>
+    <div className={styles.calendar}>
       <label>Selecciona la fecha:</label>
       <DatePicker
         selected={selectedDate}
@@ -140,21 +140,18 @@ const Service = ({ setSelectedService, selectedService }) => {
 
   return (
     <div>
-      <label>Producto:</label>
-      <select value={selectedService.id} onChange={handleProductoChange}>
-        <option value="" disabled>
-          Selecciona un producto
-        </option>
-        {services.map((service) => (
-          <option key={service.id} value={service.id}>
-            {service.name} ({formatCurrency(service.price)})
+      <div className={styles.product}>
+        <label>Producto:</label>
+        <select value={selectedService.id} onChange={handleProductoChange}>
+          <option value="" disabled>
+            Selecciona un producto
           </option>
-        ))}
-      </select>
-      <div>
-        {selectedService.description
-          ? `${selectedService.description} (${selectedService.durationMinutes} minutos aproximados.)`
-          : "Selecciona el producto que deseas reservar."}
+          {services.map((service) => (
+            <option key={service.id} value={service.id}>
+              {service.name}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );

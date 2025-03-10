@@ -36,7 +36,7 @@ export const calculateTimeSlots = (
     const minEnd = _convertToHours(end);
 
     // Itera cada 30 minutos, pero se asegura de que la cita termine antes de fin
-    for (let time = minStart; time <= minEnd - duration; time += 20) {
+    for (let time = minStart; time <= minEnd - duration; time += 60) {
       // Verificar conflictos con citas existentes
       const conflict = appointments.some((appt) => {
         const apptInicio = _convertToHours(appt.startTime);
