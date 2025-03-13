@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { AdminProtected } from "../../components/AdminProtected";
 import styles from "../../styles/Mochita.module.css";
-import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { useEffect } from 'react';
 
 const Articles = () => {
   const [articles, setArticles] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingArticle, setEditingArticle] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchArticles = async () => {
@@ -41,6 +42,10 @@ const Articles = () => {
     }
   };
 
+  const handleEditArticle = (article) => {
+    setEditingArticle(article);
+  };
+
   return (
     <AdminProtected>
       <div className={styles.container}>
@@ -67,6 +72,12 @@ const Articles = () => {
                   Eliminar
                 </button>
                 <button 
+                  onClick={() => handleEditArticle(article)}
+                  className={styles.editButton}
+                >
+                  Editar
+                </button>
+                <button 
                   onClick={() => window.open(`/articulo/${article.slug}`, '_blank')}
                   className={styles.viewButton}
                 >
@@ -78,11 +89,22 @@ const Articles = () => {
         </div>
 
         {showCreateModal && (
-          <CreateArticleModal
+          <ArticleModal
             onClose={() => setShowCreateModal(false)}
             onSuccess={() => {
               fetchArticles();
               setShowCreateModal(false);
+            }}
+          />
+        )}
+
+        {editingArticle && (
+          <ArticleModal
+            article={editingArticle}
+            onClose={() => setEditingArticle(null)}
+            onSuccess={() => {
+              fetchArticles();
+              setEditingArticle(null);
             }}
           />
         )}
@@ -91,40 +113,46 @@ const Articles = () => {
   );
 };
 
-const CreateArticleModal = ({ onClose, onSuccess }) => {
+const ArticleModal = ({ article, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    seoTitle: '',
-    metaDescription: '',
+    title: article?.title || '',
+    content: article?.content || '',
+    seoTitle: article?.seoTitle || '',
+    metaDescription: article?.metaDescription || '',
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const slug = formData.title
-        .toLowerCase()
-        .normalize('NFD') // Normalizar caracteres acentuados
-        .replace(/[\u0300-\u036f]/g, '') // Eliminar diacríticos
-        .replace(/[^a-z0-9]+/g, '-') // Reemplazar caracteres no alfanuméricos con guiones
-        .replace(/(^-|-$)/g, ''); // Eliminar guiones al inicio y final
+      if (article) {
+        // Editar artículo existente
+        await updateDoc(doc(db, 'articles', article.id), formData);
+      } else {
+        // Crear nuevo artículo
+        const slug = formData.title
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, '');
 
-      await addDoc(collection(db, 'articles'), {
-        ...formData,
-        slug,
-        createdAt: new Date().toISOString()
-      });
+        await addDoc(collection(db, 'articles'), {
+          ...formData,
+          slug,
+          createdAt: new Date().toISOString()
+        });
+      }
       
       onSuccess();
     } catch (error) {
-      console.error('Error creating article:', error);
+      console.error('Error saving article:', error);
     }
   };
 
   return (
     <div className={styles.modal}>
       <div className={styles.modalContent}>
-        <h2>Crear Nuevo Artículo</h2>
+        <h2>{article ? 'Editar Artículo' : 'Crear Nuevo Artículo'}</h2>
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label>Título</label>
@@ -167,7 +195,7 @@ const CreateArticleModal = ({ onClose, onSuccess }) => {
               Cancelar
             </button>
             <button type="submit" className={styles.submitButton}>
-              Crear Artículo
+              {article ? 'Guardar Cambios' : 'Crear Artículo'}
             </button>
           </div>
         </form>

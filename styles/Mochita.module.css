@@ -588,10 +588,26 @@
   transform: translateY(-1px);
 }
 
+.editButton {
+  padding: 0.5rem 1rem;
+  background: #e0f2fe;
+  color: #0284c7;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.editButton:hover {
+  background: #bae6fd;
+  transform: translateY(-1px);
+}
+
 .viewButton {
   padding: 0.5rem 1rem;
-  background: var(--accent-light);
-  color: var(--accent);
+  background: #f0fdf4;
+  color: #16a34a;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -600,6 +616,97 @@
 }
 
 .viewButton:hover {
-  background: var(--accent-lighter);
+  background: #dcfce7;
+  transform: translateY(-1px);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalContent h2 {
+  margin: 0 0 1.5rem 0;
+  color: var(--text);
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.formGroup input,
+.formGroup textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-light);
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.modalActions button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modalActions button[type="button"] {
+  background: #f3f4f6;
+  color: var(--text);
+  border: none;
+}
+
+.modalActions button[type="button"]:hover {
+  background: #e5e7eb;
+}
+
+.modalActions .submitButton {
+  background: var(--accent);
+  color: white;
+  border: none;
+}
+
+.modalActions .submitButton:hover {
+  background: var(--accent-dark);
   transform: translateY(-1px);
 } 
