@@ -21,6 +21,7 @@ const Confirmation = ({
   selectedDate,
   selectedSlot,
   handleCreateAppointment,
+  isCreating,
 }) => {
   if (!selectedSlot) return null;
 
@@ -30,8 +31,12 @@ const Confirmation = ({
         Has seleccionado el día {selectedDate.toLocaleDateString("es-ES")} a las{" "}
         {selectedSlot}.
       </p>
-      <button className={styles.confirmation} onClick={handleCreateAppointment}>
-        Confirmar Cita
+      <button 
+        className={styles.confirmation} 
+        onClick={handleCreateAppointment}
+        disabled={isCreating}
+      >
+        {isCreating ? "Creando..." : "Confirmar Cita"}
       </button>
     </div>
   );
@@ -162,6 +167,7 @@ const CalendarBooking = () => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedService, setSelectedService] = useState({ id: "" });
+  const [isCreating, setIsCreating] = useState(false);
 
   const { user } = useAuthentication();
 
@@ -177,12 +183,18 @@ const CalendarBooking = () => {
     selectedSlot &&
     buildAppointment(selectedDate, user.uid, selectedService, selectedSlot);
 
-  const handleCreateAppointment = () => {
-    saveAppointment(appointment).finally(() => {
+  const handleCreateAppointment = async () => {
+    if (!appointment) return;
+    
+    setIsCreating(true);
+    const success = await saveAppointment(appointment);
+    setIsCreating(false);
+    
+    if (success) {
       setSelectedSlot(null);
       setSelectedDate(null);
       setSelectedService({ id: "" });
-    });
+    }
   };
 
   return (
@@ -213,6 +225,7 @@ const CalendarBooking = () => {
         selectedSlot={selectedSlot}
         selectedDate={selectedDate}
         handleCreateAppointment={handleCreateAppointment}
+        isCreating={isCreating}
       />
     </div>
   );

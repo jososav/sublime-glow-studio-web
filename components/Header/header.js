@@ -8,13 +8,13 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <nav>
-        <Link href="/">
+        <Link href="/" className={styles.logo}>
           <Image
-            style={{ borderRadius: "50%" }}
             src="/logo.jpeg"
             alt="logo"
-            width="300"
-            height="300"
+            width={80}
+            height={80}
+            style={{ borderRadius: '50%', objectFit: 'cover' }}
           />
         </Link>
         <span className={styles.profileIcon}>

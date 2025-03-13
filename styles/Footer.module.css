@@ -1,10 +1,23 @@
 .wrapper {
-  padding: 30px;
+  background: linear-gradient(to right, var(--malta-light), var(--malta));
+  padding: 2rem;
   text-align: center;
-  background-color: var(--malta);
+  color: var(--text);
+  font-size: 0.9rem;
+  margin-top: 4rem;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .content {
-  padding: 0 15px;
-  min-height: 350px;
+  min-height: calc(100vh - 200px);
+  padding: 0 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 640px) {
+  .wrapper {
+    padding: 1.5rem;
+    margin-top: 3rem;
+  }
 }
