@@ -1,15 +1,13 @@
 .header {
-  background-color: var(--background);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  background: white;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .header nav {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -29,6 +27,13 @@
 .logo img {
   border-radius: 50%;
   object-fit: cover;
+}
+
+.headerContent {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
 }
 
 .profileIcon {

@@ -1,6 +1,7 @@
 import "../styles/global.css";
 import styles from "../styles/Footer.module.css";
 import Header from "../components/Header/header";
+import Footer from "../components/Footer/footer";
 import Authentication from "../providers/Authentication/authentication";
 
 function MyApp({ Component, pageProps }) {
@@ -14,10 +15,7 @@ function MyApp({ Component, pageProps }) {
           <Component {...pageProps} />
         </main>
 
-        {/* Footer */}
-        <footer className={styles.wrapper}>
-          <p>&copy; 2025 Sublime Glow Studio. Todos los derechos reservados.</p>
-        </footer>
+        <Footer />
       </>
     </Authentication>
   );

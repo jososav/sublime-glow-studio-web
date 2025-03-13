@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-
+import SocialLinks from '../SocialLinks/socialLinks';
 import ProfileIcon from "../../containers/ProfileIcon/profileIcon";
 import styles from "./header.module.css";
 
@@ -17,6 +17,9 @@ const Header = () => {
             style={{ borderRadius: '50%', objectFit: 'cover' }}
           />
         </Link>
+        <div className={styles.headerContent}>
+          <SocialLinks />
+        </div>
         <span className={styles.profileIcon}>
           <ProfileIcon />
         </span>
