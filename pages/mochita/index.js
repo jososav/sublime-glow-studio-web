@@ -30,6 +30,12 @@ const MochitaAdmin = () => {
       description: "Administra los usuarios y sus permisos",
       icon: "👥",
       path: "/mochita/users"
+    },
+    {
+      title: "Gestión de Artículos",
+      description: "Administra los artículos y contenido del blog",
+      icon: "📝",
+      path: "/mochita/articles"
     }
   ];
 

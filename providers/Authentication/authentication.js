@@ -2,6 +2,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { createContext, useContext, useState, useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../config/firebase";
+import { useRouter } from "next/router";
 
 const AuthenticationContext = createContext({});
 
@@ -11,6 +12,7 @@ const Authentication = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     let unsubscribed = false;
@@ -55,7 +57,10 @@ const Authentication = ({ children }) => {
     isAdmin: Boolean(userData?.isAdmin)
   };
 
-  if (loading) {
+  // Only show loading for Mochita-related pages
+  const isMochitaPage = router.pathname.startsWith('/mochita');
+  
+  if (loading && isMochitaPage) {
     return <div>Loading...</div>; // You can replace this with a proper loading component
   }
 

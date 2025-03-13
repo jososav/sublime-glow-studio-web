@@ -1,0 +1,53 @@
+.article {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.article h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.date {
+  display: block;
+  margin-bottom: 2rem;
+  color: var(--text-light);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+.content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+.content p {
+  margin-bottom: 1.5rem;
+}
+
+.content h2 {
+  font-size: 1.8rem;
+  margin: 2rem 0 1rem;
+}
+
+.content h3 {
+  font-size: 1.5rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: var(--text-light);
+}
+
+.error {
+  text-align: center;
+  padding: 3rem;
+  color: var(--error);
+  font-size: 1.2rem;
+} 

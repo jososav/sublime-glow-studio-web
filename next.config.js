@@ -8,6 +8,15 @@ const nextConfig = {
       },
     ],
   },
+  // Configuración para el sitemap
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap.xml',
+        destination: '/api/sitemap.xml',
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
