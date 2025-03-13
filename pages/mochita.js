@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useAuthentication } from "../providers/Authentication/authentication";
-import { toAmPm } from "../helpers/time";
+import { toAmPm, formatDuration } from "../helpers/time";
 import { updateAppointmentStatus, saveAppointment } from "../data/appointments/appointments";
 import { buildAppointment } from "../helpers/appointments";
 import { useAppointmentScheduling } from "../hooks/useAppointmentScheduling";
@@ -236,7 +236,7 @@ const AppointmentCard = ({ appointment, onStatusChange }) => {
         <div className={styles.serviceInfo}>
           <h4>Servicio</h4>
           <p>🎨 {appointment.serviceData.name}</p>
-          <p>⏱️ {appointment.serviceData.durationMinutes} minutos</p>
+          <p>⏱️ Duración: {formatDuration(appointment.serviceData.durationMinutes)}</p>
         </div>
       )}
       

@@ -4,14 +4,24 @@ export const getDayName = (date) => {
     .toLowerCase();
 };
 
-export const toAmPm = (slot) => {
-  const [hourStr, minuteStr] = slot.split(":");
-  let hour = parseInt(hourStr, 10);
-  const minutes = minuteStr;
-  const ampm = hour >= 12 ? "PM" : "AM";
-  hour = hour % 12;
+export const toAmPm = (time) => {
+  const [hours, minutes] = time.split(":");
+  const period = hours >= 12 ? "PM" : "AM";
+  const displayHours = hours % 12 || 12;
+  return `${displayHours}:${minutes} ${period}`;
+};
 
-  if (hour === 0) hour = 12;
-
-  return `${hour}:${minutes} ${ampm}`;
+export const formatDuration = (minutes) => {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  
+  if (hours === 0) {
+    return `${remainingMinutes} min`;
+  }
+  
+  if (remainingMinutes === 0) {
+    return `${hours}h`;
+  }
+  
+  return `${hours}:${remainingMinutes.toString().padStart(2, '0')}h`;
 };
