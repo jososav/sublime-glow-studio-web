@@ -128,4 +128,84 @@
   background: var(--border);
   cursor: not-allowed;
   transform: none;
+}
+
+.sharingSection {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.sharingSection h2 {
+  color: var(--text);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.sharingSection p {
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+}
+
+.linkSection {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  padding: 0 1rem;
+}
+
+.linkInput {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--background-light);
+  cursor: default;
+}
+
+.copyButton {
+  padding: 0.75rem 1.5rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.copyButton:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+.qrSection {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: var(--background-light);
+  border-radius: 12px;
+}
+
+.qrSection h3 {
+  color: var(--text);
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.qrContainer {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.qrSection p {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  margin-top: 1rem;
 } 

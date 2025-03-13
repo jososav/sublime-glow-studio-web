@@ -6,6 +6,7 @@ import { auth, db } from "../../config/firebase";
 import styles from "../../styles/Referral.module.css";
 import { useAuthentication } from "../../providers/Authentication/authentication";
 import Link from "next/link";
+import { QRCodeSVG } from "qrcode.react";
 
 const ReferralPage = () => {
   const router = useRouter();
@@ -14,6 +15,7 @@ const ReferralPage = () => {
   const [referrer, setReferrer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [copied, setCopied] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -45,23 +47,63 @@ const ReferralPage = () => {
     fetchReferrer();
   }, [userId]);
 
+  const handleCopyLink = async () => {
+    const referralLink = `${window.location.origin}/referidos/${userId}`;
+    try {
+      await navigator.clipboard.writeText(referralLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Error copying to clipboard:', err);
+    }
+  };
+
   // If user is already logged in, show them a message
   if (user) {
     return (
       <div className={styles.container}>
         <div className={styles.alreadyLoggedIn}>
-          <h1>Ya tienes una cuenta</h1>
-          <p>Ya has iniciado sesión en Sublime Glow Studio.</p>
-          
           {user.uid === userId ? (
-            <>
-              <p>Este es tu enlace de referidos. Compártelo con tus amigos para que se unan.</p>
+            <div className={styles.sharingSection}>
+              <h1>Tu enlace de referidos</h1>
+              <p>Invita a tus amigos y gana cupones de descuento por cada referido.</p>
+              
+              <div className={styles.linkSection}>
+                <input 
+                  type="text" 
+                  readOnly 
+                  value={`${window.location.origin}/referidos/${userId}`}
+                  className={styles.linkInput}
+                />
+                <button 
+                  onClick={handleCopyLink}
+                  className={styles.copyButton}
+                >
+                  {copied ? "¡Copiado!" : "Copiar"}
+                </button>
+              </div>
+
+              <div className={styles.qrSection}>
+                <h3>Código QR</h3>
+                <div className={styles.qrContainer}>
+                  <QRCodeSVG 
+                    value={`${window.location.origin}/referidos/${userId}`}
+                    size={200}
+                    level="H"
+                    includeMargin={true}
+                  />
+                </div>
+                <p>Escanea este código para compartir tu enlace</p>
+              </div>
+
               <Link href="/" className={styles.returnButton}>
                 Volver al inicio
               </Link>
-            </>
+            </div>
           ) : (
             <>
+              <h1>Ya tienes una cuenta</h1>
+              <p>Ya has iniciado sesión en Sublime Glow Studio.</p>
               <p>Puedes compartir tu propio enlace de referidos desde tu perfil.</p>
               <Link href={`/referidos/${user.uid}`} className={styles.returnButton}>
                 Ir a mi enlace de referidos
