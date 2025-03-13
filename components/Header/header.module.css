@@ -33,7 +33,29 @@
   flex: 1;
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 2rem;
   padding: 0 1rem;
+}
+
+.navigation {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navLink {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.navLink:hover {
+  background: var(--background);
+  color: var(--accent);
+  transform: translateY(-1px);
 }
 
 .profileIcon {
@@ -59,5 +81,18 @@
   .logo {
     width: 60px;
     height: 60px;
+  }
+
+  .headerContent {
+    gap: 1rem;
+  }
+
+  .navigation {
+    gap: 1rem;
+  }
+
+  .navLink {
+    padding: 0.5rem;
+    font-size: 0.9rem;
   }
 }

@@ -18,6 +18,11 @@ const Header = () => {
           />
         </Link>
         <div className={styles.headerContent}>
+          <div className={styles.navigation}>
+            <Link href="/articulos" className={styles.navLink}>
+              Artículos
+            </Link>
+          </div>
           <SocialLinks />
         </div>
         <span className={styles.profileIcon}>
