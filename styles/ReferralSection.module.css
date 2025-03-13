@@ -1,0 +1,135 @@
+.container {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.container h2 {
+  color: var(--text);
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.linkSection {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.linkSection p {
+  color: var(--text-light);
+  margin-bottom: 1rem;
+}
+
+.linkContainer {
+  display: flex;
+  gap: 1rem;
+}
+
+.linkInput {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #f8fafc;
+  color: var(--text);
+  cursor: default;
+}
+
+.copyButton {
+  padding: 0.75rem 1.5rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copyButton:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+.statsSection {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.statCard {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.statCard h3 {
+  color: var(--text-light);
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.statNumber {
+  color: var(--accent);
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.referralsList h3 {
+  color: var(--text);
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.loading,
+.error,
+.empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-light);
+}
+
+.error {
+  color: #dc2626;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.referralItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.userName {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.userEmail {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.date {
+  color: var(--text-light);
+  font-size: 0.9rem;
+} 

@@ -3,8 +3,11 @@ import Image from "next/image";
 import ServicesSection from "../components/ServicesSection/servicesSection";
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
+import { useAuthentication } from "../providers/Authentication/authentication";
 
 export default function Home() {
+  const { user } = useAuthentication();
+
   return (
     <>
       <Head>
@@ -46,9 +49,20 @@ export default function Home() {
               esmalte tradicional o gel (semipermanente).
             </p>
 
-            <Link href="/appointments" className={styles.ctaLink}>
-              Reserva tu cita y luce uñas perfectas
-            </Link>
+            <div className={styles.ctaContainer}>
+              <Link href="/appointments" className={styles.ctaLink}>
+                Reserva tu cita y luce uñas perfectas
+              </Link>
+              
+              {user && (
+                <Link 
+                  href={`/referidos/${user.uid}`} 
+                  className={`${styles.ctaLink} ${styles.referralLink}`}
+                >
+                  Invita a tus amigos y gana beneficios
+                </Link>
+              )}
+            </div>
           </div>
         </section>
 
