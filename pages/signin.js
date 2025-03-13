@@ -8,6 +8,7 @@ import { auth, db } from "../config/firebase";
 import styles from "../styles/Signin.module.css";
 import { useAuthentication } from "../providers/Authentication/authentication";
 import Link from "next/link";
+import DatePicker from "react-datepicker";
 
 const Signin = () => {
   const router = useRouter();
@@ -100,20 +101,30 @@ const Signin = () => {
           onChange={handleChange}
           required
         />
-        <input
-          type="text"
-          name="phone"
-          placeholder="Teléfono"
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="date"
-          name="birthday"
-          placeholder="Fecha de nacimiento"
-          onChange={handleChange}
-          required
-        />
+        <div className={styles.formGroup}>
+          <label htmlFor="phone">Teléfono</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            value={form.phone}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Fecha de Nacimiento</label>
+          <DatePicker
+            selected={form.birthday}
+            onChange={(date) => setForm({ ...form, birthday: date })}
+            dateFormat="dd/MM/yyyy"
+            maxDate={new Date()}
+            placeholderText="Selecciona tu fecha de nacimiento"
+            showYearDropdown
+            scrollableYearDropdown
+            yearDropdownItemNumber={100}
+          />
+        </div>
         <button className={styles.confirm} type="submit">
           Crear Cuenta
         </button>

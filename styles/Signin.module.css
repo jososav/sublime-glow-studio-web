@@ -88,3 +88,101 @@
     font-size: 1.75rem;
   }
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.form {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form h1 {
+  margin-bottom: 2rem;
+  text-align: center;
+  color: var(--text);
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.formGroup :global(.react-datepicker-wrapper) {
+  width: 100%;
+}
+
+.formGroup :global(.react-datepicker__input-container) {
+  width: 100%;
+}
+
+.formGroup :global(.react-datepicker__input-container input) {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.confirm {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.confirm:hover {
+  background: var(--accent-dark);
+}
+
+.error {
+  color: #dc2626;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.loginLink {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.loginLink a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.loginLink a:hover {
+  text-decoration: underline;
+}

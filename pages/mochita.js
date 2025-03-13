@@ -9,6 +9,7 @@ import { buildAppointment } from "../helpers/appointments";
 import { useAppointmentScheduling } from "../hooks/useAppointmentScheduling";
 import { useAppointmentsList } from "../hooks/useAppointmentsList";
 import { useUsers } from "../hooks/useUsers";
+import ServiceSelection from "../components/ServiceSelection/serviceSelection";
 import styles from "../styles/Mochita.module.css";
 
 const STATUS_OPTIONS = [
@@ -86,23 +87,11 @@ const CreateAppointmentModal = ({ onClose, onSuccess }) => {
           </select>
         </div>
 
-        <div className={styles.formGroup}>
-          <label>Servicio:</label>
-          <select
-            value={selectedService.id}
-            onChange={(e) => {
-              const service = services.find(s => s.id === e.target.value);
-              setSelectedService(service || { id: "" });
-            }}
-          >
-            <option value="">Seleccionar servicio</option>
-            {services.map((service) => (
-              <option key={service.id} value={service.id}>
-                {service.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <ServiceSelection
+          services={services}
+          selectedService={selectedService}
+          onServiceSelect={setSelectedService}
+        />
 
         {selectedService.id && (
           <div className={styles.formGroup}>
