@@ -50,9 +50,23 @@ export const AppointmentCard = ({ appointment, onStatusChange }) => {
   const formatDate = (date) => {
     if (!date) return "Fecha no especificada";
     try {
-      // Parse the YYYY-MM-DD format manually to ensure correct local date
-      const [year, month, day] = date.split('-').map(Number);
-      const localDate = new Date(year, month - 1, day);
+      let localDate;
+      
+      if (date instanceof Date) {
+        localDate = date;
+      } else if (typeof date === 'string') {
+        // Si es un string ISO o YYYY-MM-DD
+        if (date.includes('T')) {
+          // Es un string ISO
+          localDate = new Date(date);
+        } else {
+          // Es un string YYYY-MM-DD
+          const [year, month, day] = date.split('-').map(Number);
+          localDate = new Date(year, month - 1, day);
+        }
+      } else {
+        return "Fecha inválida";
+      }
       
       return localDate.toLocaleDateString("es-ES", {
         weekday: "long",

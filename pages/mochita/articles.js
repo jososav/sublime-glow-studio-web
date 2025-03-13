@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AdminProtected } from "../../components/AdminProtected";
 import styles from "../../styles/Mochita.module.css";
+import modalStyles from "../../styles/Modal.module.css";
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { useEffect } from 'react';
@@ -150,11 +151,11 @@ const ArticleModal = ({ article, onClose, onSuccess }) => {
   };
 
   return (
-    <div className={styles.modal}>
-      <div className={styles.modalContent}>
+    <div className={modalStyles.modalOverlay}>
+      <div className={`${modalStyles.modal} ${modalStyles.articleModal}`}>
         <h2>{article ? 'Editar Artículo' : 'Crear Nuevo Artículo'}</h2>
         <form onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
+          <div className={modalStyles.formGroup}>
             <label>Título</label>
             <input
               type="text"
@@ -163,7 +164,7 @@ const ArticleModal = ({ article, onClose, onSuccess }) => {
               required
             />
           </div>
-          <div className={styles.formGroup}>
+          <div className={modalStyles.formGroup}>
             <label>Contenido (HTML)</label>
             <textarea
               value={formData.content}
@@ -172,7 +173,7 @@ const ArticleModal = ({ article, onClose, onSuccess }) => {
               rows={10}
             />
           </div>
-          <div className={styles.formGroup}>
+          <div className={modalStyles.formGroup}>
             <label>SEO Title</label>
             <input
               type="text"
@@ -181,7 +182,7 @@ const ArticleModal = ({ article, onClose, onSuccess }) => {
               required
             />
           </div>
-          <div className={styles.formGroup}>
+          <div className={modalStyles.formGroup}>
             <label>Meta Description</label>
             <textarea
               value={formData.metaDescription}
@@ -190,11 +191,11 @@ const ArticleModal = ({ article, onClose, onSuccess }) => {
               rows={3}
             />
           </div>
-          <div className={styles.modalActions}>
-            <button type="button" onClick={onClose}>
+          <div className={modalStyles.modalActions}>
+            <button type="button" className={modalStyles.cancelButton} onClick={onClose}>
               Cancelar
             </button>
-            <button type="submit" className={styles.submitButton}>
+            <button type="submit" className={modalStyles.submitButton}>
               {article ? 'Guardar Cambios' : 'Crear Artículo'}
             </button>
           </div>

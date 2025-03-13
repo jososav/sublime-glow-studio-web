@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../config/firebase";
 import styles from "../styles/Mochita.module.css";
+import modalStyles from "../styles/Modal.module.css";
 import { buildAppointment } from "../helpers/appointments";
 import { useUsers } from "../hooks/useUsers";
 import { useAppointmentScheduling } from "../hooks/useAppointmentScheduling";
@@ -142,8 +143,8 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
   }, [onClose]);
 
   return (
-    <div className={styles.modalOverlay}>
-      <div ref={modalRef} className={styles.modal}>
+    <div className={modalStyles.modalOverlay}>
+      <div ref={modalRef} className={modalStyles.modal}>
         <h2>Crear Nueva Cita</h2>
         
         {error && (
@@ -152,7 +153,7 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
           </div>
         )}
 
-        <div className={styles.formGroup}>
+        <div className={modalStyles.formGroup}>
           <label>Cliente*:</label>
           {loadingUsers ? (
             <div>Cargando usuarios...</div>
@@ -186,7 +187,7 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
           </div>
         )}
 
-        <div className={styles.formGroup}>
+        <div className={modalStyles.formGroup}>
           <label>Servicio*:</label>
           {loadingServices ? (
             <div>Cargando servicios...</div>
@@ -213,7 +214,7 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
         </div>
 
         {selectedService?.id && (
-          <div className={styles.formGroup}>
+          <div className={modalStyles.formGroup}>
             <label>Fecha*:</label>
             <DatePicker
               selected={selectedDate}
@@ -241,7 +242,7 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
         )}
 
         {selectedDate && timeSlots.length > 0 && (
-          <div className={styles.formGroup}>
+          <div className={modalStyles.formGroup}>
             <label>Hora*:</label>
             <div className={styles.timeSlots}>
               {timeSlots.map((slot) => (
@@ -265,16 +266,16 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
           </div>
         )}
 
-        <div className={styles.modalActions}>
+        <div className={modalStyles.modalActions}>
           <button 
-            className={styles.cancelButton} 
+            className={modalStyles.cancelButton} 
             onClick={onClose}
             disabled={isCreating}
           >
             Cancelar
           </button>
           <button
-            className={styles.createButton}
+            className={modalStyles.submitButton}
             onClick={handleCreateAppointment}
             disabled={isCreating || !formData.userId || !selectedSlot || !selectedService?.id}
           >
