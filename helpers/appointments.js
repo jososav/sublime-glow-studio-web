@@ -24,55 +24,145 @@ const _calculateEndDate = (timeString, duration) => {
   return `${newH}:${newM}`;
 };
 
-export const calculateTimeSlots = (
-  schedule = [],
-  duration = 0,
-  appointments = []
-) => {
-  const slots = [];
-
-  schedule.forEach(({ start, end }) => {
-    const minStart = _convertToHours(start);
-    const minEnd = _convertToHours(end);
-
-    // Itera cada 30 minutos, pero se asegura de que la cita termine antes de fin
-    for (let time = minStart; time <= minEnd - duration; time += 60) {
-      // Verificar conflictos con citas existentes
-      const conflict = appointments.some((appt) => {
-        const apptInicio = _convertToHours(appt.startTime);
-        const apptFin = _convertToHours(appt.endTime);
-        // Existe conflicto si el intervalo [time, time + duration] se traslapa con [apptInicio, apptFin]
-        return time < apptFin && time + duration > apptInicio;
-      });
-      if (!conflict) {
-        slots.push(_convertMinutesToHour(time));
-      }
-    }
-  });
-
-  return slots;
-};
-
-export const buildAppointment = (date, userId, service, selectedSlot) => {
-  if (!date || !service || !selectedSlot) {
-    alert("Faltan datos para crear la cita");
-    return;
+const _formatDate = (date) => {
+  if (!date) {
+    throw new Error('La fecha es requerida');
   }
 
-  // Convertir la fecha a formato ISO (solo la parte de la fecha)
-  const dateString = date.toISOString().split("T")[0];
+  try {
+    let targetDate;
 
-  // Calcular la hora de fin sumando la duración del servicio
-  const startTime = selectedSlot; // Ej: "14:00"
-  const endTime = _calculateEndDate(startTime, service.durationMinutes);
+    // If it's already a Date object
+    if (date instanceof Date) {
+      if (isNaN(date.getTime())) {
+        throw new Error('Fecha inválida');
+      }
+      targetDate = date;
+    }
+    // If it's a string
+    else if (typeof date === 'string') {
+      // If it's already in YYYY-MM-DD format
+      if (date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        const [year, month, day] = date.split('-').map(Number);
+        targetDate = new Date(year, month - 1, day);
+      } else {
+        // Try to parse the date string
+        targetDate = new Date(date);
+        if (isNaN(targetDate.getTime())) {
+          throw new Error('Formato de fecha inválido');
+        }
+      }
+    } else {
+      throw new Error('Formato de fecha no soportado');
+    }
 
-  // Armar el objeto cita
+    // Format the date in YYYY-MM-DD format using local timezone
+    const year = targetDate.getFullYear();
+    const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+    const day = String(targetDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    throw new Error('Error al formatear la fecha. Por favor, selecciona una fecha válida.');
+  }
+};
+
+export const calculateTimeSlots = (
+  workSchedule,
+  serviceDuration,
+  existingAppointments = []
+) => {
+  // Validate inputs
+  if (!workSchedule || !serviceDuration) return [];
+  if (!Array.isArray(workSchedule)) return [];
+  
+  const slots = [];
+  
+  // Process each time slot in the work schedule
+  for (const timeSlot of workSchedule) {
+    if (!timeSlot.start || !timeSlot.end) continue;
+    
+    // Convert schedule times to minutes for this slot
+    const startTime = _convertToHours(timeSlot.start);
+    const endTime = _convertToHours(timeSlot.end);
+    
+    if (startTime >= endTime) continue;
+
+    // Filter appointments to only consider those that affect availability
+    const blockedAppointments = existingAppointments.filter(
+      app => ["confirmed", "pending", "finalized"].includes(app.status)
+    );
+
+    // Generate slots for this time period
+    for (let time = startTime; time <= endTime - serviceDuration; time += 30) {
+      let isAvailable = true;
+      const timeStr = _convertMinutesToHour(time);
+      const endTimeStr = _convertMinutesToHour(time + serviceDuration);
+
+      // Check if the time slot overlaps with any existing appointment
+      for (const appointment of blockedAppointments) {
+        const appointmentStart = _convertToHours(appointment.startTime);
+        const appointmentEnd = _convertToHours(appointment.endTime);
+
+        // Check if there's an overlap
+        if (
+          (time >= appointmentStart && time < appointmentEnd) || // Start during another appointment
+          (time + serviceDuration > appointmentStart && time + serviceDuration <= appointmentEnd) || // End during another appointment
+          (time <= appointmentStart && time + serviceDuration >= appointmentEnd) // Completely contain another appointment
+        ) {
+          isAvailable = false;
+          break;
+        }
+      }
+
+      if (isAvailable) {
+        slots.push(timeStr);
+      }
+    }
+  }
+
+  // Sort slots chronologically
+  return slots.sort((a, b) => _convertToHours(a) - _convertToHours(b));
+};
+
+export const buildAppointment = ({
+  userId,
+  firstName,
+  lastName,
+  email,
+  phone,
+  date,
+  startTime,
+  service,
+  notes,
+  status,
+  serviceId,
+  durationMinutes
+}) => {
+  if (!userId) throw new Error('El usuario es requerido');
+  if (!startTime) throw new Error('La hora es requerida');
+  if (!service) throw new Error('El servicio es requerido');
+  if (!serviceId) throw new Error('El ID del servicio es requerido');
+  if (!durationMinutes) throw new Error('La duración es requerida');
+
   return {
     userId,
-    endTime,
+    firstName,
+    lastName,
+    email,
+    phone,
+    date: _formatDate(date),
     startTime,
-    date: dateString,
-    status: "pending",
-    serviceId: service.id,
+    service,
+    notes: notes || '',
+    status: status || 'pending',
+    serviceId,
+    durationMinutes,
+    createdAt: new Date().toISOString()
   };
+};
+
+export const convertTimeToMinutes = (timeString) => {
+  return _convertToHours(timeString);
 };

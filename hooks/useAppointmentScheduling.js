@@ -23,27 +23,70 @@ export const useAppointmentScheduling = () => {
 
   // Calculate time slots
   useEffect(() => {
-    if (selectedDate) {
+    if (selectedDate && selectedService.id) {
       const dayName = getDayName(selectedDate);
       const workSchedule = schedule[dayName];
+      console.log('Debug - Selected Date:', selectedDate);
+      console.log('Debug - Day Name:', dayName);
+      console.log('Debug - Work Schedule:', workSchedule);
+      console.log('Debug - Selected Service:', selectedService);
 
       // Fetch appointments for the selected date
       const getAppointments = async () => {
-        const dateString = selectedDate.toISOString().split("T")[0];
-        const appointmentsRef = collection(db, "appointments");
-        const q = query(appointmentsRef, where("date", "==", dateString));
-        const querySnapshot = await getDocs(q);
-        const appointmentsList = [];
-        querySnapshot.forEach((doc) => {
-          appointmentsList.push({ id: doc.id, ...doc.data() });
-        });
-        setAppointments(appointmentsList);
+        try {
+          // Format date string ensuring it's in the local timezone
+          const year = selectedDate.getFullYear();
+          const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+          const day = String(selectedDate.getDate()).padStart(2, '0');
+          const dateString = `${year}-${month}-${day}`;
+          
+          const appointmentsRef = collection(db, "appointments");
+          const q = query(appointmentsRef, where("date", "==", dateString));
+          const querySnapshot = await getDocs(q);
+          const appointmentsList = [];
+          querySnapshot.forEach((doc) => {
+            appointmentsList.push({ id: doc.id, ...doc.data() });
+          });
+          console.log('Debug - Appointments List:', appointmentsList);
+          
+          if (workSchedule && Array.isArray(workSchedule) && selectedService.durationMinutes) {
+            console.log('Debug - Calculating slots with:', {
+              workSchedule,
+              duration: selectedService.durationMinutes,
+              appointments: appointmentsList
+            });
+            const slots = calculateTimeSlots(workSchedule, selectedService.durationMinutes, appointmentsList);
+            console.log('Debug - Calculated Time Slots:', slots);
+            setTimeSlots(slots);
+          } else {
+            console.log('Debug - Missing required data:', {
+              hasWorkSchedule: !!workSchedule,
+              isArray: Array.isArray(workSchedule),
+              duration: selectedService.durationMinutes
+            });
+            setTimeSlots([]);
+          }
+        } catch (error) {
+          console.error('Error fetching appointments:', error);
+          setTimeSlots([]);
+        }
       };
 
-      getAppointments();
-      setTimeSlots(calculateTimeSlots(workSchedule, selectedService.durationMinutes, appointments));
+      if (workSchedule) {
+        console.log('Debug - Work schedule found, fetching appointments');
+        getAppointments();
+      } else {
+        console.log('Debug - No work schedule for day:', dayName);
+        setTimeSlots([]);
+      }
+    } else {
+      console.log('Debug - Missing date or service:', { 
+        hasDate: !!selectedDate, 
+        hasService: !!selectedService.id 
+      });
+      setTimeSlots([]);
     }
-  }, [selectedDate, selectedService, schedule, appointments]);
+  }, [selectedDate, selectedService, schedule]);
 
   const resetScheduling = () => {
     setSelectedService({ id: "" });

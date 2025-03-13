@@ -9,6 +9,7 @@ import {
   getDocs,
   doc,
   getDoc,
+  updateDoc
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 
@@ -20,10 +21,15 @@ export const useAppointmentsList = (isAdmin) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [showOnlyPending, setShowOnlyPending] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchAppointments = async (lastDoc = null) => {
     try {
       setIsLoading(true);
+      setLoading(true);
+      setError(null);
+      
       const appointmentsRef = collection(db, "appointments");
 
       let q = query(
@@ -77,8 +83,10 @@ export const useAppointmentsList = (isAdmin) => {
       }
     } catch (error) {
       console.error("Error fetching appointments:", error);
+      setError(error.message);
     } finally {
       setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -98,14 +106,25 @@ export const useAppointmentsList = (isAdmin) => {
     setShowOnlyPending(!showOnlyPending);
   };
 
-  const handleStatusChange = (appointmentId, newStatus) => {
-    setAppointments(currentAppointments =>
-      currentAppointments.map(appointment =>
-        appointment.id === appointmentId
-          ? { ...appointment, status: newStatus }
-          : appointment
-      )
-    );
+  const handleStatusChange = async (appointmentId, newStatus) => {
+    try {
+      const appointmentRef = doc(db, "appointments", appointmentId);
+      await updateDoc(appointmentRef, {
+        status: newStatus
+      });
+      
+      // Update local state
+      setAppointments(currentAppointments =>
+        currentAppointments.map(appointment =>
+          appointment.id === appointmentId
+            ? { ...appointment, status: newStatus }
+            : appointment
+        )
+      );
+    } catch (error) {
+      console.error("Error updating appointment status:", error);
+      throw error; // Propagate error to component
+    }
   };
 
   const refreshAppointments = () => {
@@ -115,6 +134,8 @@ export const useAppointmentsList = (isAdmin) => {
 
   return {
     appointments,
+    loading,
+    error,
     isLoading,
     hasMore,
     showOnlyPending,

@@ -32,15 +32,36 @@ const Appointments = () => {
     }
 
     setIsCreating(true);
-    const appointment = buildAppointment(selectedDate, user.uid, selectedService, selectedSlot);
-    
-    if (appointment) {
-      const success = await saveAppointment(appointment);
-      if (success) {
-        resetScheduling();
+    try {
+      const appointmentData = {
+        userId: user.uid,
+        firstName: userData.firstName || "",
+        lastName: userData.lastName || "",
+        email: userData.email || "",
+        phone: userData.phone || "",
+        date: selectedDate,
+        startTime: selectedSlot,
+        service: selectedService.name,
+        serviceId: selectedService.id,
+        durationMinutes: selectedService.durationMinutes,
+        notes: "",
+        status: "pending"
+      };
+
+      const appointment = buildAppointment(appointmentData);
+      
+      if (appointment) {
+        const success = await saveAppointment(appointment);
+        if (success) {
+          resetScheduling();
+        }
       }
+    } catch (error) {
+      console.error('Error creating appointment:', error);
+      alert(error.message);
+    } finally {
+      setIsCreating(false);
     }
-    setIsCreating(false);
   };
 
   if (!user || !userData) {
