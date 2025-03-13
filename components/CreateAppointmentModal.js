@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { addDoc, collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import styles from "../styles/Mochita.module.css";
 import modalStyles from "../styles/Modal.module.css";
 import { buildAppointment } from "../helpers/appointments";
 import { useUsers } from "../hooks/useUsers";
 import { useAppointmentScheduling } from "../hooks/useAppointmentScheduling";
+import { useUserCoupons } from "../hooks/useUserCoupons";
 import { toAmPm } from "../helpers/time";
 
 const ServiceCard = ({ service, isSelected, onClick }) => (
@@ -42,11 +43,13 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
   const [formData, setFormData] = useState({
     userId: ""
   });
+  const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState(null);
   const modalRef = useRef(null);
 
   const selectedUser = users.find(user => user.id === formData.userId);
+  const { coupons, loading: loadingCoupons } = useUserCoupons(formData.userId);
 
   const checkPendingAppointments = async (userId) => {
     const appointmentsRef = collection(db, "appointments");
@@ -60,22 +63,8 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
   };
 
   const handleCreateAppointment = async () => {
-    console.log('=== STARTING APPOINTMENT CREATION ===');
-    console.log('Selected date before validation:', selectedDate);
-    
-    if (!formData.userId || !selectedSlot || !selectedService?.id) {
-      const missingFields = [];
-      if (!formData.userId) missingFields.push('usuario');
-      if (!selectedSlot) missingFields.push('hora');
-      if (!selectedService?.id) missingFields.push('servicio');
-      
-      const errorMsg = `Por favor, completa los campos obligatorios: ${missingFields.join(', ')}`;
-      setError(errorMsg);
-      return;
-    }
-
-    if (!selectedDate || !(selectedDate instanceof Date) || isNaN(selectedDate)) {
-      setError("Por favor, selecciona una fecha válida");
+    if (!formData.userId || !selectedService.id || !selectedDate || !selectedSlot) {
+      setError("Por favor, completa todos los campos requeridos");
       return;
     }
 
@@ -95,7 +84,6 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
 
       // Create appointment date at noon to avoid timezone issues
       const appointmentDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 12, 0, 0);
-      console.log('Final appointment date:', appointmentDate);
 
       const appointmentData = {
         userId: selectedUser.id,
@@ -112,19 +100,29 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
         status: "pending"
       };
 
-      console.log('Appointment data:', appointmentData);
+      // Add coupon information if a coupon is selected
+      if (selectedCoupon) {
+        appointmentData.couponId = selectedCoupon.id;
+        appointmentData.couponAssignmentId = selectedCoupon.assignmentId;
+        appointmentData.discountPercentage = selectedCoupon.discountPercentage;
+      }
       
       const appointment = buildAppointment(appointmentData);
-      console.log('Built appointment:', appointment);
 
       const appointmentRef = await addDoc(collection(db, "appointments"), appointment);
-      console.log('Appointment saved with ID:', appointmentRef.id);
-      
-      resetScheduling();
+
+      // If a coupon was used, update its status to "used"
+      if (selectedCoupon) {
+        await updateDoc(doc(db, "couponAssignments", selectedCoupon.assignmentId), {
+          status: "used",
+          usedAt: new Date().toISOString(),
+          appointmentId: appointmentRef.id
+        });
+      }
+
       onSuccess();
-      onClose();
     } catch (error) {
-      console.error('Error creating appointment:', error);
+      console.error("Error creating appointment:", error);
       setError(error.message);
     } finally {
       setIsCreating(false);
@@ -168,7 +166,10 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
           ) : (
             <select
               value={formData.userId}
-              onChange={(e) => setFormData(prev => ({ ...prev, userId: e.target.value }))}
+              onChange={(e) => {
+                setFormData(prev => ({ ...prev, userId: e.target.value }));
+                setSelectedCoupon(null);
+              }}
             >
               <option value="">Selecciona un cliente</option>
               {users.map(user => (
@@ -184,6 +185,34 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
           <div className={styles.selectedUserInfo}>
             <p>📱 {selectedUser.phone || "No especificado"}</p>
             <p>📧 {selectedUser.email || "No especificado"}</p>
+          </div>
+        )}
+
+        {formData.userId && (
+          <div className={modalStyles.formGroup}>
+            <label>Cupón de Descuento:</label>
+            {loadingCoupons ? (
+              <div>Cargando cupones...</div>
+            ) : coupons.length === 0 ? (
+              <div className={styles.infoMessage}>
+                No hay cupones disponibles para este usuario
+              </div>
+            ) : (
+              <select
+                value={selectedCoupon?.id || ""}
+                onChange={(e) => {
+                  const coupon = coupons.find(c => c.id === e.target.value);
+                  setSelectedCoupon(coupon || null);
+                }}
+              >
+                <option value="">Sin cupón</option>
+                {coupons.map(coupon => (
+                  <option key={coupon.id} value={coupon.id}>
+                    {coupon.code} - {coupon.discountPercentage}% de descuento
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         )}
 
@@ -219,15 +248,9 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
             <DatePicker
               selected={selectedDate}
               onChange={(date) => {
-                // Create date in local timezone at start of day
                 const localDate = new Date(date);
-                // Adjust for timezone offset to ensure the date stays the same
                 const offset = localDate.getTimezoneOffset();
                 localDate.setMinutes(localDate.getMinutes() + offset);
-                
-                console.log('Selected date:', date);
-                console.log('Local date adjusted:', localDate);
-                console.log('Date string:', localDate.toISOString());
                 setSelectedDate(localDate);
               }}
               dateFormat="dd/MM/yyyy"

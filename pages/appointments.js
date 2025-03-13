@@ -6,6 +6,9 @@ import { toAmPm } from "../helpers/time";
 import { saveAppointment } from "../data/appointments/appointments";
 import { buildAppointment } from "../helpers/appointments";
 import { useAppointmentScheduling } from "../hooks/useAppointmentScheduling";
+import { useUserCoupons } from "../hooks/useUserCoupons";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
 import ServiceSelection from "../components/ServiceSelection/serviceSelection";
 import styles from "../styles/Appointments.module.css";
 
@@ -23,6 +26,8 @@ const Appointments = () => {
     timeSlots,
     resetScheduling,
   } = useAppointmentScheduling();
+  const { coupons, loading: loadingCoupons } = useUserCoupons(user?.uid);
+  const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
 
   const handleCreateAppointment = async () => {
@@ -48,12 +53,28 @@ const Appointments = () => {
         status: "pending"
       };
 
+      // Add coupon information if a coupon is selected
+      if (selectedCoupon) {
+        appointmentData.couponId = selectedCoupon.id;
+        appointmentData.couponAssignmentId = selectedCoupon.assignmentId;
+        appointmentData.discountPercentage = selectedCoupon.discountPercentage;
+      }
+
       const appointment = buildAppointment(appointmentData);
       
       if (appointment) {
-        const success = await saveAppointment(appointment);
-        if (success) {
+        const result = await saveAppointment(appointment);
+        if (result.success) {
+          // If a coupon was used, update its status
+          if (selectedCoupon) {
+            await updateDoc(doc(db, "couponAssignments", selectedCoupon.assignmentId), {
+              status: "used",
+              usedAt: new Date().toISOString(),
+              appointmentId: result.appointmentId
+            });
+          }
           resetScheduling();
+          setSelectedCoupon(null);
         }
       }
     } catch (error) {
@@ -79,20 +100,43 @@ const Appointments = () => {
       />
 
       {selectedService.id && (
-        <div className={styles.formGroup}>
-          <label>Fecha:</label>
-          <DatePicker
-            selected={selectedDate}
-            onChange={setSelectedDate}
-            dateFormat="dd/MM/yyyy"
-            minDate={new Date()}
-            filterDate={(date) => {
-              const day = date.toLocaleDateString("en-EN", { weekday: "long" });
-              return Object.keys(schedule).includes(day.toLowerCase());
-            }}
-            placeholderText="Seleccionar fecha"
-          />
-        </div>
+        <>
+          <div className={styles.formGroup}>
+            <label>Fecha:</label>
+            <DatePicker
+              selected={selectedDate}
+              onChange={setSelectedDate}
+              dateFormat="dd/MM/yyyy"
+              minDate={new Date()}
+              filterDate={(date) => {
+                const day = date.toLocaleDateString("en-EN", { weekday: "long" });
+                return Object.keys(schedule).includes(day.toLowerCase());
+              }}
+              placeholderText="Seleccionar fecha"
+            />
+          </div>
+
+          {!loadingCoupons && coupons.length > 0 && (
+            <div className={styles.formGroup}>
+              <label>¿Deseas usar un cupón de descuento?</label>
+              <select
+                value={selectedCoupon?.id || ""}
+                onChange={(e) => {
+                  const coupon = coupons.find(c => c.id === e.target.value);
+                  setSelectedCoupon(coupon || null);
+                }}
+                className={styles.select}
+              >
+                <option value="">Sin cupón</option>
+                {coupons.map(coupon => (
+                  <option key={coupon.id} value={coupon.id}>
+                    {coupon.code} - {coupon.discountPercentage}% de descuento
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </>
       )}
 
       {selectedDate && timeSlots.length > 0 && (

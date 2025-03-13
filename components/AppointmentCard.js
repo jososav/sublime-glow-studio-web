@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import styles from "../styles/Mochita.module.css";
+import { useUserCoupons } from "../hooks/useUserCoupons";
 
 const STATUS_OPTIONS = [
   { value: "pending", label: "Pendiente" },
@@ -14,12 +15,15 @@ export const AppointmentCard = ({ appointment, onStatusChange }) => {
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingCoupon, setIsEditingCoupon] = useState(false);
   const cardRef = useRef(null);
+  const { coupons, loading: loadingCoupons } = useUserCoupons(appointment.userId);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (cardRef.current && !cardRef.current.contains(event.target)) {
         setIsEditing(false);
+        setIsEditingCoupon(false);
       }
     };
 
@@ -41,6 +45,68 @@ export const AppointmentCard = ({ appointment, onStatusChange }) => {
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating appointment status:", error);
+      setError(error.message);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleCouponChange = async (newCouponId) => {
+    setUpdating(true);
+    setError(null);
+
+    try {
+      // If there was a previous coupon, reactivate it
+      if (appointment.couponAssignmentId) {
+        await updateDoc(doc(db, "couponAssignments", appointment.couponAssignmentId), {
+          status: "active",
+          usedAt: null,
+          appointmentId: null
+        });
+      }
+
+      if (!newCouponId) {
+        // Remove coupon from appointment
+        await updateDoc(doc(db, "appointments", appointment.id), {
+          couponId: null,
+          couponAssignmentId: null,
+          discountPercentage: null
+        });
+        
+        // Update the local appointment data
+        appointment.couponId = null;
+        appointment.couponAssignmentId = null;
+        appointment.discountPercentage = null;
+        appointment.couponData = null;
+      } else {
+        // Get the new coupon data
+        const selectedCoupon = coupons.find(c => c.id === newCouponId);
+        if (!selectedCoupon) throw new Error("Cupón no encontrado");
+
+        // Update the appointment with new coupon data
+        await updateDoc(doc(db, "appointments", appointment.id), {
+          couponId: selectedCoupon.id,
+          couponAssignmentId: selectedCoupon.assignmentId,
+          discountPercentage: selectedCoupon.discountPercentage
+        });
+
+        // Mark the new coupon as used
+        await updateDoc(doc(db, "couponAssignments", selectedCoupon.assignmentId), {
+          status: "used",
+          usedAt: new Date().toISOString(),
+          appointmentId: appointment.id
+        });
+
+        // Update the local appointment data
+        appointment.couponId = selectedCoupon.id;
+        appointment.couponAssignmentId = selectedCoupon.assignmentId;
+        appointment.discountPercentage = selectedCoupon.discountPercentage;
+        appointment.couponData = selectedCoupon;
+      }
+
+      setIsEditingCoupon(false);
+    } catch (error) {
+      console.error("Error updating coupon:", error);
       setError(error.message);
     } finally {
       setUpdating(false);
@@ -153,6 +219,67 @@ export const AppointmentCard = ({ appointment, onStatusChange }) => {
         {appointment.notes && (
           <p>📝 {appointment.notes}</p>
         )}
+        
+        <div className={styles.couponSection}>
+          {isEditingCoupon ? (
+            <div className={styles.couponEdit}>
+              <select
+                value={appointment.couponId || ""}
+                onChange={(e) => handleCouponChange(e.target.value)}
+                disabled={updating || loadingCoupons}
+              >
+                <option value="">Sin cupón</option>
+                {coupons?.map(coupon => (
+                  <option key={coupon.id} value={coupon.id}>
+                    {coupon.code} - {coupon.discountPercentage}% de descuento
+                  </option>
+                ))}
+              </select>
+              <button 
+                className={styles.cancelButton}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditingCoupon(false);
+                }}
+                disabled={updating}
+              >
+                Cancelar
+              </button>
+            </div>
+          ) : (
+            <div className={styles.couponDisplay}>
+              {(appointment.couponId || appointment.couponData) ? (
+                <div className={styles.couponInfo}>
+                  <p>🎟️ Cupón: {appointment.couponData?.code || 'No disponible'}</p>
+                  <p className={styles.discountInfo}>
+                    Descuento: {appointment.discountPercentage || appointment.couponData?.discountPercentage}%
+                  </p>
+                  <button
+                    className={styles.editCouponButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsEditingCoupon(true);
+                    }}
+                    disabled={updating}
+                  >
+                    Cambiar Cupón
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className={styles.addCouponButton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEditingCoupon(true);
+                  }}
+                  disabled={updating}
+                >
+                  Agregar Cupón
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {isEditing && (

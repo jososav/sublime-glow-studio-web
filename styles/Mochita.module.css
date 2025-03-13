@@ -183,6 +183,26 @@
   gap: 0.5rem;
 }
 
+.couponInfo {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed #e5e7eb;
+}
+
+.couponInfo p {
+  margin: 0.25rem 0;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.discountInfo {
+  color: var(--accent) !important;
+  font-weight: 500;
+}
+
 .statusActions {
   display: flex;
   flex-wrap: wrap;
@@ -709,4 +729,351 @@
 .modalActions .submitButton:hover {
   background: var(--accent-dark);
   transform: translateY(-1px);
+}
+
+/* Coupons List Styles */
+.couponsList {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  position: relative;
+}
+
+.couponCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.couponCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.couponCard.updating {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.couponCard.editing {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 20;
+}
+
+.couponHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.couponCode {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  font-family: monospace;
+  background: #f1f5f9;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+}
+
+.couponInfo {
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.couponInfo p {
+  margin: 0.25rem 0;
+  color: var(--text-light);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statusDropdown {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+
+.statusDropdown h4 {
+  margin: 0 0 0.75rem 0;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.statusOption {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+  border: 2px solid;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.statusOption:hover {
+  opacity: 0.9;
+}
+
+.statusOption.active {
+  color: white;
+}
+
+.userAssignment {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+
+.userAssignment h4 {
+  margin: 0 0 0.75rem 0;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.userAssignment select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.assignButton {
+  width: 100%;
+  padding: 0.5rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.assignButton:hover {
+  background: var(--accent-dark);
+}
+
+.assignButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.assignmentsInfo {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.assignmentsInfo h4 {
+  margin: 0 0 0.75rem 0;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.assignmentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.assignmentItem {
+  padding: 0.75rem 1rem;
+  background: white;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.assignmentItemContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.assignmentCount {
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+
+.usersList {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  background: white;
+  margin-bottom: 1rem;
+}
+
+.userItem {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e5e5;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.userItemContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.userItem:last-child {
+  border-bottom: none;
+}
+
+.userItem:hover {
+  background: #f1f5f9;
+}
+
+.userItem.selected {
+  background: var(--accent-light);
+}
+
+.userName {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.userEmail {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.existingCount {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  background: #f1f5f9;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  margin-right: 2rem;
+}
+
+.checkmark {
+  color: var(--accent);
+  font-weight: bold;
+  font-size: 1.2rem;
+  position: absolute;
+  right: 1rem;
+}
+
+.couponSection {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.couponEdit {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.couponEdit select {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: white;
+  font-size: 0.875rem;
+}
+
+.couponDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.couponInfo {
+  background-color: #f3f4f6;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.discountInfo {
+  color: #059669;
+  font-weight: 500;
+}
+
+.editCouponButton,
+.addCouponButton,
+.cancelButton {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.editCouponButton {
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+}
+
+.editCouponButton:hover {
+  background-color: #4338ca;
+}
+
+.addCouponButton {
+  background-color: #e5e7eb;
+  color: #374151;
+  border: none;
+}
+
+.addCouponButton:hover {
+  background-color: #d1d5db;
+}
+
+.cancelButton {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+}
+
+.cancelButton:hover {
+  background-color: #dc2626;
+}
+
+.editCouponButton:disabled,
+.addCouponButton:disabled,
+.cancelButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 } 

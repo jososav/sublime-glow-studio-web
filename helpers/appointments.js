@@ -138,7 +138,10 @@ export const buildAppointment = ({
   notes,
   status,
   serviceId,
-  durationMinutes
+  durationMinutes,
+  couponId,
+  couponAssignmentId,
+  discountPercentage
 }) => {
   if (!userId) throw new Error('El usuario es requerido');
   if (!startTime) throw new Error('La hora es requerida');
@@ -146,7 +149,7 @@ export const buildAppointment = ({
   if (!serviceId) throw new Error('El ID del servicio es requerido');
   if (!durationMinutes) throw new Error('La duración es requerida');
 
-  return {
+  const appointment = {
     userId,
     firstName,
     lastName,
@@ -161,6 +164,15 @@ export const buildAppointment = ({
     durationMinutes,
     createdAt: new Date().toISOString()
   };
+
+  // Add coupon information if provided
+  if (couponId) {
+    appointment.couponId = couponId;
+    appointment.couponAssignmentId = couponAssignmentId;
+    appointment.discountPercentage = discountPercentage;
+  }
+
+  return appointment;
 };
 
 export const convertTimeToMinutes = (timeString) => {

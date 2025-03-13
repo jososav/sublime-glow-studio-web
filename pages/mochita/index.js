@@ -36,6 +36,12 @@ const MochitaAdmin = () => {
       description: "Administra los artículos y contenido del blog",
       icon: "📝",
       path: "/mochita/articles"
+    },
+    {
+      title: "Gestión de Cupones",
+      description: "Administra los cupones de descuento",
+      icon: "🎫",
+      path: "/mochita/coupons"
     }
   ];
 

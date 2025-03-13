@@ -61,16 +61,30 @@ export const useAppointmentsList = (isAdmin) => {
         // Fetch service data
         const serviceDoc = await getDoc(doc(db, "services", appointmentData.serviceId));
         const serviceData = serviceDoc.exists() ? serviceDoc.data() : null;
+
+        // Fetch coupon data if the appointment has a coupon
+        let couponData = null;
+        if (appointmentData.couponId) {
+          const couponDoc = await getDoc(doc(db, "coupons", appointmentData.couponId));
+          if (couponDoc.exists()) {
+            couponData = {
+              id: couponDoc.id,
+              ...couponDoc.data()
+            };
+          }
+        }
         
-        appointmentsList.push({
+        const finalAppointment = {
           id: docSnapshot.id,
           ...appointmentData,
           userData,
           serviceData: serviceData ? {
             id: appointmentData.serviceId,
             ...serviceData
-          } : null
-        });
+          } : null,
+          couponData
+        };
+        appointmentsList.push(finalAppointment);
       }
 
       setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
