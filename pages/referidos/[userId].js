@@ -177,6 +177,24 @@ const ReferralPage = () => {
         createdAt: new Date().toISOString()
       });
 
+      // Find and assign the SGS10 coupon to the new user
+      const couponsRef = collection(db, "coupons");
+      const couponQuery = query(couponsRef, where("code", "==", "SGS10"));
+      const couponSnapshot = await getDocs(couponQuery);
+
+      if (!couponSnapshot.empty) {
+        const coupon = { id: couponSnapshot.docs[0].id, ...couponSnapshot.docs[0].data() };
+        
+        // Create coupon assignment
+        await addDoc(collection(db, "couponAssignments"), {
+          couponId: coupon.id,
+          userId: userCredential.user.uid,
+          status: "active",
+          createdAt: new Date().toISOString(),
+          reason: "Registro por referido"
+        });
+      }
+
       // Redirect to home page
       router.push("/");
     } catch (error) {
