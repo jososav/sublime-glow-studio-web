@@ -204,14 +204,24 @@
   font-weight: 500;
 }
 
-.completed {
-  background-color: #e6fffa;
-  color: #2c7a7b;
+.finalized {
+  background-color: #C6F6D5;
+  color: #2F855A;
 }
 
-.upcoming {
-  background-color: #ebf8ff;
-  color: #2b6cb0;
+.cancelled {
+  background-color: #FED7D7;
+  color: #C53030;
+}
+
+.confirmed {
+  background-color: #BEE3F8;
+  color: #2B6CB0;
+}
+
+.pending {
+  background-color: #FEEBC8;
+  color: #C05621;
 }
 
 .appointmentDetails {
@@ -222,6 +232,12 @@
   color: #2d3748;
   margin-bottom: 0.5rem;
   font-size: 1.1rem;
+}
+
+.time {
+  color: #4A5568;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
 }
 
 .couponInfo {

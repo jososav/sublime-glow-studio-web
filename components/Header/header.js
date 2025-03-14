@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthentication } from '../../providers/Authentication/authentication';
 import SocialLinks from '../SocialLinks/socialLinks';
 import ProfileIcon from "../../containers/ProfileIcon/profileIcon";
@@ -13,10 +13,37 @@ const Header = () => {
   const { user } = useAuthentication();
   const isMochitaPage = router.pathname.startsWith('/mochita');
   const homeLink = isMochitaPage ? '/mochita' : '/';
+  const navRef = useRef(null);
+  const menuButtonRef = useRef(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        navRef.current && 
+        !navRef.current.contains(event.target) &&
+        !menuButtonRef.current.contains(event.target)
+      ) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Close menu on route change
+  useEffect(() => {
+    router.events.on('routeChangeStart', closeMenu);
+    return () => router.events.off('routeChangeStart', closeMenu);
+  }, [router]);
 
   return (
     <header className={styles.header}>
@@ -31,10 +58,18 @@ const Header = () => {
           />
         </Link>
         <div className={styles.headerContent}>
-          <button className={styles.menuButton} onClick={toggleMenu} aria-label="Toggle menu">
+          <button 
+            ref={menuButtonRef}
+            className={styles.menuButton} 
+            onClick={toggleMenu} 
+            aria-label="Toggle menu"
+          >
             <span className={styles.menuIcon}></span>
           </button>
-          <div className={`${styles.navigation} ${isMenuOpen ? styles.menuOpen : ''}`}>
+          <div 
+            ref={navRef}
+            className={`${styles.navigation} ${isMenuOpen ? styles.menuOpen : ''}`}
+          >
             <Link href="/articulos" className={styles.navLink}>
               Artículos
             </Link>

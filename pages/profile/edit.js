@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useAuthentication } from '../../providers/Authentication/authentication';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
@@ -13,6 +15,7 @@ const EditProfilePage = () => {
     name: '',
     phone: '',
     email: '',
+    birthday: null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -29,6 +32,7 @@ const EditProfilePage = () => {
         name: userData.name || user.displayName || '',
         phone: userData.phone || '',
         email: user.email || '',
+        birthday: userData.birthday ? new Date(userData.birthday) : null,
       });
     }
   }, [user, userData, loading, router]);
@@ -52,6 +56,7 @@ const EditProfilePage = () => {
       await updateDoc(userRef, {
         name: formData.name,
         phone: formData.phone,
+        birthday: formData.birthday ? formData.birthday.toISOString() : null,
         updatedAt: new Date()
       });
 
@@ -110,6 +115,21 @@ const EditProfilePage = () => {
               maxLength="8"
               placeholder="Ejemplo: 88445566"
               title="Por favor ingresa un número de teléfono válido de 8 dígitos"
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="birthday">Fecha de Nacimiento</label>
+            <DatePicker
+              selected={formData.birthday}
+              onChange={(date) => setFormData(prev => ({ ...prev, birthday: date }))}
+              dateFormat="dd/MM/yyyy"
+              maxDate={new Date()}
+              placeholderText="Selecciona tu fecha de nacimiento"
+              showYearDropdown
+              scrollableYearDropdown
+              yearDropdownItemNumber={100}
+              className={styles.input}
             />
           </div>
 

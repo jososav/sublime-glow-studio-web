@@ -1,80 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useAuthentication } from '../../providers/Authentication/authentication';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../../config/firebase';
+import { useUserCoupons } from '../../hooks/useUserCoupons';
 import styles from './Profile.module.css';
 
 const CouponsPage = () => {
   const { user, loading } = useAuthentication();
   const router = useRouter();
-  const [coupons, setCoupons] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { coupons, loading: loadingCoupons, error } = useUserCoupons(user?.uid);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
-      return;
-    }
+  if (loading || loadingCoupons) return <div>Cargando...</div>;
+  if (!user) {
+    router.push('/login');
+    return null;
+  }
 
-    const fetchCoupons = async () => {
-      if (user) {
-        try {
-          const couponsRef = collection(db, 'coupons');
-          const q = query(
-            couponsRef,
-            where('userId', '==', user.uid)
-          );
-          
-          const querySnapshot = await getDocs(q);
-          const couponsData = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-            expirationDate: doc.data().expirationDate?.toDate()
-          }));
-
-          setCoupons(couponsData);
-        } catch (err) {
-          console.error('Error fetching coupons:', err);
-          setError('Error al cargar los cupones');
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchCoupons();
-  }, [user, loading, router]);
-
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('es-MX', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const getCouponStatus = (coupon) => {
-    if (coupon.used) {
-      return { text: 'Usado', className: styles.used };
-    }
-    
-    const now = new Date();
-    if (coupon.expirationDate && coupon.expirationDate < now) {
-      return { text: 'Expirado', className: styles.expired };
-    }
-    
-    return { text: 'Disponible', className: styles.available };
-  };
-
-  if (loading || isLoading) return <div>Cargando...</div>;
-  if (!user) return null;
-
-  const availableCoupons = coupons.filter(c => !c.used && (!c.expirationDate || c.expirationDate > new Date()));
-  const otherCoupons = coupons.filter(c => c.used || (c.expirationDate && c.expirationDate <= new Date()));
+  const availableCoupons = coupons.filter(c => !c.used && (!c.expirationDate || new Date(c.expirationDate) > new Date()));
+  const otherCoupons = coupons.filter(c => c.used || (c.expirationDate && new Date(c.expirationDate) <= new Date()));
 
   return (
     <>
@@ -108,15 +52,19 @@ const CouponsPage = () => {
                         <span className={`${styles.couponStatus} ${styles.available}`}>
                           Disponible
                         </span>
-                        <span className={styles.discount}>{coupon.discount}% OFF</span>
+                        <span className={styles.discount}>{coupon.discountPercentage}% OFF</span>
                       </div>
                       
                       <div className={styles.couponDetails}>
                         <p className={styles.couponCode}>{coupon.code}</p>
-                        <p className={styles.couponType}>{coupon.type}</p>
+                        <p className={styles.couponType}>{coupon.type || 'Descuento General'}</p>
                         {coupon.expirationDate && (
                           <p className={styles.expiration}>
-                            Válido hasta: {formatDate(coupon.expirationDate)}
+                            Válido hasta: {new Date(coupon.expirationDate).toLocaleDateString('es-MX', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
                           </p>
                         )}
                       </div>
@@ -131,27 +79,36 @@ const CouponsPage = () => {
                 <h2>Cupones Usados o Expirados</h2>
                 <div className={styles.couponGrid}>
                   {otherCoupons.map((coupon) => {
-                    const status = getCouponStatus(coupon);
+                    const status = coupon.used ? 'used' : 'expired';
+                    const statusText = coupon.used ? 'Usado' : 'Expirado';
                     return (
                       <div key={coupon.id} className={`${styles.couponCard} ${styles.inactive}`}>
                         <div className={styles.couponHeader}>
-                          <span className={`${styles.couponStatus} ${status.className}`}>
-                            {status.text}
+                          <span className={`${styles.couponStatus} ${styles[status]}`}>
+                            {statusText}
                           </span>
-                          <span className={styles.discount}>{coupon.discount}% OFF</span>
+                          <span className={styles.discount}>{coupon.discountPercentage}% OFF</span>
                         </div>
                         
                         <div className={styles.couponDetails}>
                           <p className={styles.couponCode}>{coupon.code}</p>
-                          <p className={styles.couponType}>{coupon.type}</p>
-                          {coupon.used && (
+                          <p className={styles.couponType}>{coupon.type || 'Descuento General'}</p>
+                          {coupon.used && coupon.usedDate && (
                             <p className={styles.usedDate}>
-                              Usado el: {formatDate(coupon.usedDate.toDate())}
+                              Usado el: {new Date(coupon.usedDate).toLocaleDateString('es-MX', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              })}
                             </p>
                           )}
                           {coupon.expirationDate && (
                             <p className={styles.expiration}>
-                              Expiró el: {formatDate(coupon.expirationDate)}
+                              Expiró el: {new Date(coupon.expirationDate).toLocaleDateString('es-MX', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              })}
                             </p>
                           )}
                         </div>

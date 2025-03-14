@@ -30,11 +30,14 @@ const AppointmentsPage = () => {
           );
           
           const querySnapshot = await getDocs(q);
-          const appointmentsData = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-            date: doc.data().date.toDate()
-          }));
+          const appointmentsData = querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              ...data,
+              date: data.date instanceof Date ? data.date : new Date(data.date)
+            };
+          });
 
           setAppointments(appointmentsData);
         } catch (err) {
@@ -60,14 +63,19 @@ const AppointmentsPage = () => {
     });
   };
 
-  const getAppointmentStatus = (date) => {
-    const now = new Date();
-    const appointmentDate = new Date(date);
+  const getAppointmentStatus = (appointment) => {
+    const status = appointment.status || 'pending';
     
-    if (appointmentDate < now) {
-      return { text: 'Completada', className: styles.completed };
-    } else {
-      return { text: 'Próxima', className: styles.upcoming };
+    switch (status.toLowerCase()) {
+      case 'finalized':
+        return { text: 'Finalizada', className: styles.finalized };
+      case 'cancelled':
+        return { text: 'Cancelada', className: styles.cancelled };
+      case 'confirmed':
+        return { text: 'Confirmada', className: styles.confirmed };
+      case 'pending':
+      default:
+        return { text: 'Pendiente', className: styles.pending };
     }
   };
 
@@ -94,7 +102,7 @@ const AppointmentsPage = () => {
         ) : (
           <div className={styles.appointmentsList}>
             {appointments.map((appointment) => {
-              const status = getAppointmentStatus(appointment.date);
+              const status = getAppointmentStatus(appointment);
               return (
                 <div key={appointment.id} className={styles.appointmentCard}>
                   <div className={styles.appointmentHeader}>
@@ -108,11 +116,11 @@ const AppointmentsPage = () => {
                   
                   <div className={styles.appointmentDetails}>
                     <h3>{appointment.service}</h3>
-                    {appointment.couponUsed && (
+                    <p className={styles.time}>Hora: {appointment.startTime}</p>
+                    {appointment.couponId && (
                       <div className={styles.couponInfo}>
-                        <span>Cupón aplicado: </span>
-                        <strong>{appointment.couponUsed.code}</strong>
-                        <span> ({appointment.couponUsed.discount}% descuento)</span>
+                        <span>Cupón aplicado con </span>
+                        <strong>{appointment.discountPercentage}% de descuento</strong>
                       </div>
                     )}
                   </div>

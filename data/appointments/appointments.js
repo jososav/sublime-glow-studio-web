@@ -35,8 +35,10 @@ export const saveAppointment = async (appointment) => {
     const pendingCount = await getPendingAppointmentsCount(appointment.userId);
     
     if (pendingCount >= MAX_PENDING_APPOINTMENTS) {
-      alert("No puedes tener más de 3 citas pendientes. Por favor, confirma o cancela alguna de tus citas existentes.");
-      return { success: false };
+      return { 
+        success: false, 
+        error: "No puedes tener más de 3 citas pendientes. Por favor, confirma o cancela alguna de tus citas existentes." 
+      };
     }
 
     const appointmentRef = await addDoc(collection(db, "appointments"), {
@@ -44,12 +46,10 @@ export const saveAppointment = async (appointment) => {
       createdAt: serverTimestamp()
     });
 
-    alert("Cita creada exitosamente");
     return { success: true, appointmentId: appointmentRef.id };
   } catch (error) {
     console.error("Error al crear la cita: ", error);
-    alert("Error al crear la cita");
-    return { success: false };
+    return { success: false, error: "Error al crear la cita" };
   }
 };
 

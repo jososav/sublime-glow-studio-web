@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useAuthentication } from "../providers/Authentication/authentication";
+import { useRouter } from 'next/router';
 import { toAmPm } from "../helpers/time";
 import { saveAppointment } from "../data/appointments/appointments";
 import { buildAppointment } from "../helpers/appointments";
@@ -13,6 +14,7 @@ import ServiceSelection from "../components/ServiceSelection/serviceSelection";
 import styles from "../styles/Appointments.module.css";
 
 const Appointments = () => {
+  const router = useRouter();
   const { user, userData } = useAuthentication();
   const {
     services,
@@ -29,14 +31,16 @@ const Appointments = () => {
   const { coupons, loading: loadingCoupons } = useUserCoupons(user?.uid);
   const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [error, setError] = useState('');
 
   const handleCreateAppointment = async () => {
     if (!selectedService.id || !selectedDate || !selectedSlot) {
-      alert("Por favor, selecciona un servicio, fecha y hora");
+      setError("Por favor, selecciona un servicio, fecha y hora");
       return;
     }
 
     setIsCreating(true);
+    setError('');
     try {
       const appointmentData = {
         userId: user.uid,
@@ -75,11 +79,15 @@ const Appointments = () => {
           }
           resetScheduling();
           setSelectedCoupon(null);
+          // Redirect to profile appointments page
+          router.push('/profile/appointments');
+        } else if (result.error) {
+          setError(result.error);
         }
       }
     } catch (error) {
       console.error('Error creating appointment:', error);
-      alert(error.message);
+      setError(error.message || 'Error al crear la cita');
     } finally {
       setIsCreating(false);
     }
@@ -92,6 +100,12 @@ const Appointments = () => {
   return (
     <div className={styles.container}>
       <h1>Agendar Cita</h1>
+
+      {error && (
+        <div className={styles.error}>
+          {error}
+        </div>
+      )}
 
       <ServiceSelection
         services={services}
@@ -113,6 +127,7 @@ const Appointments = () => {
                 return Object.keys(schedule).includes(day.toLowerCase());
               }}
               placeholderText="Seleccionar fecha"
+              className={styles.datePicker}
             />
           </div>
 
