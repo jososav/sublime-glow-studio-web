@@ -17,6 +17,13 @@ const generateSiteMap = (articles, baseUrl) => {
         <priority>0.9</priority>
       </url>
 
+      <url>
+        <loc>${baseUrl}/promociones</loc>
+        <lastmod>${new Date().toISOString()}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+      </url>
+
       <!-- Artículos -->
       ${articles
         .map(({ slug, createdAt }) => {

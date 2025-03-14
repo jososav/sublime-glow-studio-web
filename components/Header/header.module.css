@@ -1,98 +1,125 @@
 .header {
   background: white;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border-color);
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .header nav {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
 .logo {
-  width: 80px;
-  height: 80px;
-  position: relative;
-  transition: transform 0.3s ease;
-}
-
-.logo:hover {
-  transform: scale(1.05);
-}
-
-.logo img {
-  border-radius: 50%;
-  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .headerContent {
-  flex: 1;
+  flex-grow: 1;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 2rem;
-  padding: 0 1rem;
+  margin: 0 2rem;
 }
 
 .navigation {
   display: flex;
-  gap: 1.5rem;
-}
-
-.navLink {
-  color: var(--text);
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.navLink:hover {
-  background: var(--background);
-  color: var(--accent);
-  transform: translateY(-1px);
-}
-
-.profileIcon {
-  padding: 0.5rem;
-  display: flex;
+  gap: 2rem;
   align-items: center;
 }
 
-.profileIcon * {
+.navLink {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.navLink:hover {
+  color: #2c5282;
+}
+
+.profileIcon {
+  flex-shrink: 0;
+}
+
+.menuButton {
+  display: none;
+  background: none;
+  border: none;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  padding: 0.5rem;
 }
 
-.profileIcon *:hover {
-  transform: scale(1.1);
+.menuIcon {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: #333;
+  position: relative;
+  transition: background-color 0.2s;
 }
 
-@media (max-width: 640px) {
-  .header nav {
-    padding: 0.75rem;
-  }
+.menuIcon::before,
+.menuIcon::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 2px;
+  background-color: #333;
+  transition: transform 0.2s;
+}
 
-  .logo {
-    width: 60px;
-    height: 60px;
+.menuIcon::before {
+  top: -6px;
+}
+
+.menuIcon::after {
+  bottom: -6px;
+}
+
+@media (max-width: 768px) {
+  .menuButton {
+    display: block;
+    z-index: 2;
   }
 
   .headerContent {
-    gap: 1rem;
+    margin: 0 1rem;
   }
 
   .navigation {
-    gap: 1rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    flex-direction: column;
+    padding: 5rem 2rem 2rem;
+    gap: 1.5rem;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  .navLink {
-    padding: 0.5rem;
-    font-size: 0.9rem;
+  .menuOpen {
+    transform: translateY(0);
+  }
+
+  .menuOpen + .menuIcon {
+    background-color: transparent;
+  }
+
+  .menuOpen + .menuIcon::before {
+    transform: rotate(45deg) translate(4px, 4px);
+  }
+
+  .menuOpen + .menuIcon::after {
+    transform: rotate(-45deg) translate(4px, -4px);
   }
 }

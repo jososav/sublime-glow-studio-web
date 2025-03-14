@@ -1,0 +1,135 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+}
+
+.section {
+  margin-bottom: 3rem;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.earnSection {
+  margin-bottom: 3rem;
+}
+
+.method {
+  background-color: #fff;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.method h3 {
+  color: #2c5282;
+  margin-bottom: 1rem;
+}
+
+.couponInfo {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: #f7fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.couponInfo h4 {
+  color: #2d3748;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.couponInfo ul {
+  list-style: none;
+  padding: 0;
+}
+
+.couponInfo ul li {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.referralTiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.tier {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tier:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tier h5 {
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.tier ul {
+  list-style: none;
+  padding: 0;
+}
+
+.tier ul li {
+  margin-bottom: 0.25rem;
+  color: #4a5568;
+}
+
+.benefits {
+  margin-top: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.benefits li {
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+}
+
+.notes {
+  background-color: #f7fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+.notes p {
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .referralTiers {
+    grid-template-columns: 1fr;
+  }
+
+  .method {
+    padding: 1.5rem;
+  }
+
+  .couponInfo {
+    padding: 1rem;
+  }
+} 

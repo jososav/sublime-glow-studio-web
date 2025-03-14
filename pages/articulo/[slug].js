@@ -15,28 +15,106 @@ const ArticlePage = ({ article, error, fullUrl }) => {
 
   const publishDate = new Date(article.createdAt).toISOString();
 
+  // Format the date for the article
+  const formattedDate = new Date(article.createdAt).toLocaleDateString('es-MX', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  // Create a clean excerpt for meta description (first 160 characters of content without HTML)
+  const cleanExcerpt = article.content
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .slice(0, 160)
+    .trim() + '...';
+
   return (
     <>
       <Head>
-        <title>{article.seoTitle || article.title}</title>
-        <meta name="description" content={article.metaDescription} />
-        <meta property="og:title" content={article.seoTitle || article.title} />
-        <meta property="og:description" content={article.metaDescription} />
+        <title>{`${article.title} | Sublime Glow Studio`}</title>
+        <meta name="description" content={cleanExcerpt} />
+        <meta
+          name="keywords"
+          content={`${article.tags?.join(', ')}, belleza, estética, consejos de belleza, sublime glow studio`}
+        />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content={article.title} />
+        <meta property="og:description" content={cleanExcerpt} />
         <meta property="og:type" content="article" />
         <meta property="og:url" content={fullUrl} />
+        {article.image && (
+          <meta property="og:image" content={article.image} />
+        )}
         <meta property="article:published_time" content={publishDate} />
+        <meta property="article:author" content="Sublime Glow Studio" />
+        {article.tags?.map(tag => (
+          <meta property="article:tag" content={tag} key={tag} />
+        ))}
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={article.title} />
+        <meta name="twitter:description" content={cleanExcerpt} />
+        {article.image && (
+          <meta name="twitter:image" content={article.image} />
+        )}
+        
+        {/* Additional SEO */}
+        <meta name="robots" content="index, follow" />
+        <meta name="author" content="Sublime Glow Studio" />
         <link rel="canonical" href={fullUrl} />
-        {/* Add more meta tags as needed */}
+        
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BlogPosting",
+              "headline": article.title,
+              "description": cleanExcerpt,
+              "image": article.image,
+              "datePublished": new Date(article.createdAt).toISOString(),
+              "dateModified": new Date(article.updatedAt || article.createdAt).toISOString(),
+              "author": {
+                "@type": "Organization",
+                "name": "Sublime Glow Studio"
+              },
+              "publisher": {
+                "@type": "Organization",
+                "name": "Sublime Glow Studio",
+                "logo": {
+                  "@type": "ImageObject",
+                  "url": "https://sublimeglowstudio.com/logo.jpeg"
+                }
+              },
+              "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": fullUrl
+              },
+              "keywords": article.tags?.join(', '),
+              "articleBody": article.content.replace(/<[^>]*>/g, '')
+            })
+          }}
+        />
       </Head>
       <article className={styles.article}>
+        <div className={styles.metadata}>
+          <time dateTime={publishDate}>
+            {formattedDate}
+          </time>
+          {article.tags && (
+            <div className={styles.tags}>
+              {article.tags.map(tag => (
+                <span key={tag} className={styles.tag}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
         <h1>{article.title}</h1>
-        <time dateTime={publishDate} className={styles.date}>
-          {new Date(article.createdAt).toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })}
-        </time>
         <div 
           className={styles.content}
           dangerouslySetInnerHTML={{ __html: article.content }}

@@ -11,10 +11,81 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Sublime Glow Studio</title>
-        <meta name="description" content="Sublime Glow Studio - Tu destino de belleza" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Sublime Glow Studio | Servicios de Belleza y Estética Profesional</title>
+        <meta
+          name="description"
+          content="Descubre servicios de belleza profesionales en Sublime Glow Studio. Especialistas en maquillaje, tratamientos faciales, y más. Obtén hasta 100% de descuento en tu primera cita con nuestro programa de referidos."
+        />
+        <meta
+          name="keywords"
+          content="salon de belleza, maquillaje profesional, tratamientos faciales, belleza, estética, servicios de belleza, maquillaje, cuidado de la piel, promociones belleza"
+        />
+        {/* Open Graph */}
+        <meta
+          property="og:title"
+          content="Sublime Glow Studio | Servicios de Belleza y Estética Profesional"
+        />
+        <meta
+          property="og:description"
+          content="Tu destino de belleza profesional. Servicios de maquillaje, tratamientos faciales y más. Programa tu cita hoy y descubre nuestras promociones especiales."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://sublimeglowstudio.com" />
+        <meta property="og:site_name" content="Sublime Glow Studio" />
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="Sublime Glow Studio | Servicios de Belleza y Estética"
+        />
+        <meta
+          name="twitter:description"
+          content="Tu destino de belleza profesional. Servicios de maquillaje, tratamientos faciales y más. Programa tu cita hoy."
+        />
+        {/* Additional SEO */}
+        <meta name="robots" content="index, follow" />
+        <meta name="language" content="Spanish" />
+        <meta name="revisit-after" content="7 days" />
+        <meta name="author" content="Sublime Glow Studio" />
+        <link rel="canonical" href="https://sublimeglowstudio.com" />
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BeautySalon",
+              "name": "Sublime Glow Studio",
+              "description": "Servicios profesionales de belleza y estética",
+              "url": "https://sublimeglowstudio.com",
+              "priceRange": "$$",
+              "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "MX"
+              },
+              "offers": {
+                "@type": "Offer",
+                "description": "Programa de referidos con descuentos de hasta 100%"
+              },
+              "potentialAction": {
+                "@type": "ReserveAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "https://sublimeglowstudio.com/reservar",
+                  "actionPlatform": [
+                    "http://schema.org/DesktopWebPlatform",
+                    "http://schema.org/IOSPlatform",
+                    "http://schema.org/AndroidPlatform"
+                  ]
+                },
+                "result": {
+                  "@type": "Reservation",
+                  "name": "Reserva de cita"
+                }
+              }
+            })
+          }}
+        />
       </Head>
       <main className={styles.main}>
         <section className={styles.wrapper}>
