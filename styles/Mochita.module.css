@@ -258,23 +258,47 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 2rem;
+  backdrop-filter: blur(4px);
 }
 
 .modal {
   background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: modalEnter 0.3s ease-out;
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .modal h2 {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
+  margin: 0;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 1.25rem;
   color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.modal h2::before {
+  content: "👥";
+  font-size: 1.5rem;
 }
 
 .formGroup {
@@ -305,10 +329,12 @@
 }
 
 .modalActions {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
+  background: var(--background-light);
+  border-radius: 0 0 16px 16px;
 }
 
 .cancelButton {
@@ -640,95 +666,145 @@
   transform: translateY(-1px);
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+.referredUsersList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.referredUserItem {
+  background: var(--background-light);
+  padding: 1.25rem;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modalContent {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modalContent h2 {
-  margin: 0 0 1.5rem 0;
-  color: var(--text);
-}
-
-.formGroup {
-  margin-bottom: 1.5rem;
-}
-
-.formGroup label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--text);
-  font-weight: 500;
-}
-
-.formGroup input,
-.formGroup textarea {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 1rem;
-}
-
-.formGroup input:focus,
-.formGroup textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-light);
-}
-
-.modalActions {
-  display: flex;
   gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 2rem;
 }
 
-.modalActions button {
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-size: 1rem;
+.referredUserItem:hover {
+  transform: translateX(4px);
+  border-color: var(--accent-light);
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.referredUserInfo {
+  flex: 1;
+}
+
+.referredUserInfo h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.referredUserInfo h3::before {
+  content: "👤";
+  font-size: 1.2rem;
+}
+
+.referredUserInfo p {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.referredUserInfo p:first-of-type::before {
+  content: "📧";
+}
+
+.referralDate {
+  margin-top: 0.75rem !important;
+  font-style: italic;
+  color: var(--text-lighter) !important;
+  font-size: 0.9rem !important;
+}
+
+.referralDate::before {
+  content: "📅" !important;
+}
+
+.closeButton {
+  padding: 0.75rem 2rem;
+  background: white;
+  color: var(--text);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.modalActions button[type="button"] {
-  background: #f3f4f6;
-  color: var(--text);
-  border: none;
+.closeButton::before {
+  content: "✕";
+  font-size: 1.1rem;
 }
 
-.modalActions button[type="button"]:hover {
-  background: #e5e7eb;
-}
-
-.modalActions .submitButton {
-  background: var(--accent);
-  color: white;
-  border: none;
-}
-
-.modalActions .submitButton:hover {
-  background: var(--accent-dark);
+.closeButton:hover {
+  background: var(--background);
   transform: translateY(-1px);
+  border-color: var(--text-light);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--text-light);
+  font-style: italic;
+  background: var(--background-light);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.emptyState::before {
+  content: "🔍";
+  font-size: 2rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--text-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loading::before {
+  content: "⏳";
+  font-size: 2rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* Coupons List Styles */
@@ -1076,4 +1152,132 @@
 .cancelButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.referralsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.referralCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.referralCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.referralInfo h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.referralEmail {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.referralStats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--background-light);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.statItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statLabel {
+  color: var(--text);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.statValue {
+  background: var(--accent-light);
+  color: var(--accent);
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.referredUsersList {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 1rem;
+}
+
+.referredUserItem {
+  background: var(--background-light);
+  padding: 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.referredUserItem:hover {
+  transform: translateX(4px);
+  background: var(--accent-light);
+}
+
+.referredUserInfo h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.referredUserInfo p {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.referralDate {
+  margin-top: 0.5rem !important;
+  font-style: italic;
+}
+
+.closeButton {
+  padding: 0.75rem 1.5rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-light);
+  font-style: italic;
+  background: var(--background-light);
+  border-radius: 8px;
 } 

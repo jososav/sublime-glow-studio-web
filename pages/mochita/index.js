@@ -42,6 +42,12 @@ const MochitaAdmin = () => {
       description: "Administra los cupones de descuento",
       icon: "🎫",
       path: "/mochita/coupons"
+    },
+    {
+      title: "Gestión de Referidos",
+      description: "Visualiza y administra el programa de referidos",
+      icon: "🤝",
+      path: "/mochita/referrals"
     }
   ];
 
