@@ -60,6 +60,10 @@ const ReferralPage = () => {
 
   // If user is already logged in, show them a message
   if (user) {
+    const referralLink = `${window.location.origin}/referidos/${userId}`;
+    const whatsappText = encodeURIComponent(`¡Hola! Te invito a unirte a Sublime Glow Studio. Regístrate usando mi enlace y obtén un 10% de descuento en tu primer cita: ${referralLink}`);
+    const whatsappUrl = `https://wa.me/?text=${whatsappText}`;
+
     return (
       <div className={styles.container}>
         <div className={styles.alreadyLoggedIn}>
@@ -68,26 +72,29 @@ const ReferralPage = () => {
               <h1>Tu enlace de referidos</h1>
               <p>Invita a tus amigos y gana cupones de descuento por cada referido.</p>
               
-              <div className={styles.linkSection}>
-                <input 
-                  type="text" 
-                  readOnly 
-                  value={`${window.location.origin}/referidos/${userId}`}
-                  className={styles.linkInput}
-                />
+              <div className={styles.sharingButtons}>
                 <button 
                   onClick={handleCopyLink}
                   className={styles.copyButton}
                 >
-                  {copied ? "¡Copiado!" : "Copiar"}
+                  {copied ? "¡Enlace Copiado!" : "Copiar Enlace"}
                 </button>
+
+                <a 
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.whatsappButton}
+                >
+                  Compartir por WhatsApp
+                </a>
               </div>
 
               <div className={styles.qrSection}>
                 <h3>Código QR</h3>
                 <div className={styles.qrContainer}>
                   <QRCodeSVG 
-                    value={`${window.location.origin}/referidos/${userId}`}
+                    value={referralLink}
                     size={200}
                     level="H"
                     includeMargin={true}

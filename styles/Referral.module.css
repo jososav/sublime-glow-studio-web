@@ -146,22 +146,11 @@
   margin-bottom: 1.5rem;
 }
 
-.linkSection {
+.sharingButtons {
   display: flex;
-  gap: 0.5rem;
-  margin: 1.5rem 0;
-  padding: 0 1rem;
-}
-
-.linkInput {
-  flex: 1;
-  padding: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 0.9rem;
-  color: var(--text);
-  background: var(--background-light);
-  cursor: default;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0;
 }
 
 .copyButton {
@@ -173,11 +162,30 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 100px;
+  min-width: 140px;
 }
 
 .copyButton:hover {
   background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+.whatsappButton {
+  padding: 0.75rem 1.5rem;
+  background: #25D366;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  min-width: 140px;
+  text-align: center;
+}
+
+.whatsappButton:hover {
+  background: #128C7E;
   transform: translateY(-1px);
 }
 
@@ -208,4 +216,9 @@
   color: var(--text-light);
   font-size: 0.9rem;
   margin-top: 1rem;
+}
+
+.linkSection,
+.linkInput {
+  display: none;
 } 
