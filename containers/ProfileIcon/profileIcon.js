@@ -6,12 +6,20 @@ import Avatar from "../../components/Avatar/avatar";
 import { signInWithGoogle, logout } from "../../config/firebase";
 import { useAuthentication } from "../../providers/Authentication/authentication";
 
-export default function Login() {
-  const { user } = useAuthentication();
+export default function ProfileIcon() {
+  const { user, userData, loading } = useAuthentication();
 
-  return user ? (
+  if (loading) {
+    return (
+      <div className={styles.wrapper}>
+        <FiUser size={20} />
+      </div>
+    );
+  }
+
+  return userData ? (
     <button onClick={logout}>
-      <Avatar user={user} />
+      <Avatar user={userData} />
     </button>
   ) : (
     <Link href={"signin"}>

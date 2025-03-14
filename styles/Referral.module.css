@@ -30,7 +30,7 @@
   background: var(--accent);
   color: white;
   text-decoration: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: 500;
   transition: all 0.2s ease;
 }
@@ -59,6 +59,12 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--background);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .form h2 {
@@ -80,23 +86,25 @@
 }
 
 .formGroup input {
-  padding: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--malta-light);
+  border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .formGroup input:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--cotton-candy);
+  box-shadow: 0 0 0 3px var(--cotton-candy-light);
 }
 
 .error {
   background: #fee2e2;
-  color: #dc2626;
+  color: var(--error);
   padding: 1rem;
-  border-radius: 6px;
+  border-radius: 8px;
   margin-bottom: 1rem;
   text-align: center;
 }
@@ -109,23 +117,26 @@
 
 .submitButton {
   padding: 1rem;
-  background: var(--accent);
-  color: white;
+  background: var(--cotton-candy);
+  color: var(--text);
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
 }
 
 .submitButton:hover {
-  background: var(--accent-dark);
-  transform: translateY(-1px);
+  background: var(--cotton-candy-dark);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .submitButton:disabled {
-  background: var(--border);
+  background: var(--text-light);
   cursor: not-allowed;
   transform: none;
 }
@@ -155,10 +166,10 @@
 
 .copyButton {
   padding: 0.75rem 1.5rem;
-  background: var(--accent);
-  color: white;
+  background: var(--cotton-candy);
+  color: var(--text);
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -166,7 +177,8 @@
 }
 
 .copyButton:hover {
-  background: var(--accent-dark);
+  background: var(--cotton-candy-dark);
+  color: white;
   transform: translateY(-1px);
 }
 
@@ -175,7 +187,7 @@
   background: #25D366;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;

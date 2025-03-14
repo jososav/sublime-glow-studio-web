@@ -4,6 +4,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
+  setPersistence,
+  browserLocalPersistence
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
@@ -20,6 +22,12 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
+
+// Set persistence to LOCAL
+setPersistence(auth, browserLocalPersistence).catch((error) => {
+  console.error("Error setting auth persistence:", error);
+});
+
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 

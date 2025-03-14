@@ -2,9 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { updateProfile, createUserWithEmailAndPassword } from "firebase/auth";
-
 import { auth, db } from "../config/firebase";
-
 import styles from "../styles/Signin.module.css";
 import { useAuthentication } from "../providers/Authentication/authentication";
 import Link from "next/link";
@@ -24,7 +22,7 @@ const Signin = () => {
     firstName: "",
     lastName: "",
     phone: "",
-    birthday: "",
+    birthday: null,
   });
 
   const handleChange = (e) => {
@@ -55,13 +53,13 @@ const Signin = () => {
         phone,
         email,
         lastName,
-        birthday,
+        birthday: birthday ? birthday.toISOString() : null,
         firstName,
         createdAt: serverTimestamp(),
       });
 
       console.log("User created successfully!");
-      // Optionally, clear the form or navigate to another page
+      router.push("/");
     } catch (error) {
       console.error("Error signing up:", error);
     }
@@ -123,6 +121,7 @@ const Signin = () => {
             showYearDropdown
             scrollableYearDropdown
             yearDropdownItemNumber={100}
+            wrapperClassName={styles.datePickerWrapper}
           />
         </div>
         <button className={styles.confirm} type="submit">

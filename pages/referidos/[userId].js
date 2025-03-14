@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { doc, getDoc, collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, addDoc, query, where, getDocs, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../config/firebase";
 import styles from "../../styles/Referral.module.css";
@@ -149,14 +149,22 @@ const ReferralPage = () => {
       }
 
       // Create user in Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        formData.email,
-        formData.password
-      );
+      let userCredential;
+      try {
+        userCredential = await createUserWithEmailAndPassword(
+          auth,
+          formData.email,
+          formData.password
+        );
+      } catch (authError) {
+        console.error("Error creating Firebase Auth user:", authError);
+        setError("Error al crear la cuenta: " + authError.message);
+        return;
+      }
 
       // Create user document in Firestore
       const newUser = {
+        id: userCredential.user.uid,
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -165,41 +173,55 @@ const ReferralPage = () => {
         createdAt: new Date().toISOString()
       };
 
-      await addDoc(collection(db, "users"), {
-        id: userCredential.user.uid,
-        ...newUser
-      });
+      try {
+        await setDoc(doc(db, "users", userCredential.user.uid), newUser);
+      } catch (userDocError) {
+        console.error("Error creating user document:", userDocError);
+        setError("Error al guardar los datos del usuario");
+        return;
+      }
 
       // Create referral record
-      await addDoc(collection(db, "referrals"), {
-        referrerId: userId,
-        referredId: userCredential.user.uid,
-        createdAt: new Date().toISOString()
-      });
-
-      // Find and assign the SGS10 coupon to the new user
-      const couponsRef = collection(db, "coupons");
-      const couponQuery = query(couponsRef, where("code", "==", "SGS10"));
-      const couponSnapshot = await getDocs(couponQuery);
-
-      if (!couponSnapshot.empty) {
-        const coupon = { id: couponSnapshot.docs[0].id, ...couponSnapshot.docs[0].data() };
-        
-        // Create coupon assignment
-        await addDoc(collection(db, "couponAssignments"), {
-          couponId: coupon.id,
-          userId: userCredential.user.uid,
-          status: "active",
-          createdAt: new Date().toISOString(),
-          reason: "Registro por referido"
+      try {
+        await addDoc(collection(db, "referrals"), {
+          referrerId: userId,
+          referredId: userCredential.user.uid,
+          createdAt: new Date().toISOString()
         });
+      } catch (referralError) {
+        console.error("Error creating referral record:", referralError);
+        // Don't return here, as the user is already created
+      }
+
+      // Find and assign the SGS10 coupon
+      try {
+        const couponsRef = collection(db, "coupons");
+        const couponQuery = query(couponsRef, where("code", "==", "SGS10"));
+        const couponSnapshot = await getDocs(couponQuery);
+
+        if (!couponSnapshot.empty) {
+          const coupon = { id: couponSnapshot.docs[0].id, ...couponSnapshot.docs[0].data() };
+          
+          await addDoc(collection(db, "couponAssignments"), {
+            couponId: coupon.id,
+            userId: userCredential.user.uid,
+            status: "active",
+            createdAt: new Date().toISOString(),
+            reason: "Registro por referido"
+          });
+        } else {
+          console.warn("SGS10 coupon not found");
+        }
+      } catch (couponError) {
+        console.error("Error assigning welcome coupon:", couponError);
+        // Don't return here, as the user is already created
       }
 
       // Redirect to home page
       router.push("/");
     } catch (error) {
-      console.error("Error creating user:", error);
-      setError(error.message);
+      console.error("Unexpected error during signup:", error);
+      setError("Error inesperado al crear la cuenta");
     }
   };
 

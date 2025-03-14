@@ -8,7 +8,7 @@ const AuthenticationContext = createContext({});
 
 export const useAuthentication = () => useContext(AuthenticationContext);
 
-const Authentication = ({ children }) => {
+export const AuthenticationProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,6 @@ const Authentication = ({ children }) => {
           setLoading(false);
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
         if (!unsubscribed) {
           setLoading(false);
         }
@@ -61,7 +60,7 @@ const Authentication = ({ children }) => {
   const isMochitaPage = router.pathname.startsWith('/mochita');
   
   if (loading && isMochitaPage) {
-    return <div>Loading...</div>; // You can replace this with a proper loading component
+    return <div>Loading...</div>;
   }
 
   return (
@@ -70,5 +69,3 @@ const Authentication = ({ children }) => {
     </AuthenticationContext.Provider>
   );
 };
-
-export default Authentication;

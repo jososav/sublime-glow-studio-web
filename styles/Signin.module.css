@@ -127,62 +127,33 @@
 .formGroup input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--malta-light);
   border-radius: 8px;
   font-size: 1rem;
   color: var(--text);
 }
 
-.formGroup :global(.react-datepicker-wrapper) {
+/* DatePicker specific styles */
+.datePickerWrapper {
   width: 100%;
 }
 
-.formGroup :global(.react-datepicker__input-container) {
+.datePickerWrapper > div {
   width: 100%;
 }
 
-.formGroup :global(.react-datepicker__input-container input) {
+.datePickerWrapper input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--malta-light);
   border-radius: 8px;
   font-size: 1rem;
   color: var(--text);
+  background-color: var(--background);
 }
 
-.confirm {
-  width: 100%;
-  padding: 0.75rem;
-  margin-top: 1rem;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.confirm:hover {
-  background: var(--accent-dark);
-}
-
-.error {
-  color: #dc2626;
-  margin-top: 1rem;
-  text-align: center;
-}
-
-.loginLink {
-  margin-top: 1rem;
-  text-align: center;
-}
-
-.loginLink a {
-  color: var(--accent);
-  text-decoration: none;
-}
-
-.loginLink a:hover {
-  text-decoration: underline;
+.datePickerWrapper input:focus {
+  border-color: var(--cotton-candy);
+  box-shadow: 0 0 0 3px var(--cotton-candy-light);
+  outline: none;
 }

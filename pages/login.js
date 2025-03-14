@@ -21,16 +21,9 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      console.log("Logged in successfully", user);
-      // Optionally, redirect the user or clear the form
+      await signInWithEmailAndPassword(auth, email, password);
+      // Redirect will happen automatically due to auth state change
     } catch (error) {
-      console.error("Error logging in:", error);
       setError(error.message);
     }
   };

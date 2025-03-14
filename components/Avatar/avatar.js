@@ -11,10 +11,43 @@ const _getInitials = (name) => {
 };
 
 const Avatar = ({ user }) => {
-  console.log(user.displayName, 'user')
+  if (!user) {
+    return (
+      <div className="avatar">
+        <div className="avatar-initials">??</div>
+        <style jsx>{`
+          .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0070f3;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+          }
+          .avatar-initials {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  const displayName = user.firstName && user.lastName 
+    ? `${user.firstName} ${user.lastName}`
+    : user.email;
+
   return (
     <div className="avatar">
-      {user?.photoURL ? (
+      {user.photoURL ? (
         <Image
           src={user.photoURL}
           alt="Perfil"
@@ -23,7 +56,7 @@ const Avatar = ({ user }) => {
           className="avatar-image"
         />
       ) : (
-        <div className="avatar-initials">{_getInitials(user?.displayName)}</div>
+        <div className="avatar-initials">{_getInitials(displayName)}</div>
       )}
 
       <style jsx>{`
