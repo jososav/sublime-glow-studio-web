@@ -48,6 +48,18 @@ const MochitaAdmin = () => {
       description: "Visualiza y administra el programa de referidos",
       icon: "🤝",
       path: "/mochita/referrals"
+    },
+    {
+      title: "Horario de Trabajo",
+      description: "Configura los horarios de atención",
+      icon: "⏰",
+      path: "/mochita/schedule"
+    },
+    {
+      title: "Servicios",
+      description: "Administra los servicios disponibles",
+      icon: "💅",
+      path: "/mochita/services"
     }
   ];
 

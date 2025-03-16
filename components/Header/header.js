@@ -3,7 +3,6 @@ import Image from "next/image";
 import { useRouter } from 'next/router';
 import { useState, useEffect, useRef } from 'react';
 import { useAuthentication } from '../../providers/Authentication/authentication';
-import SocialLinks from '../SocialLinks/socialLinks';
 import ProfileIcon from "../../containers/ProfileIcon/profileIcon";
 import styles from "./header.module.css";
 
@@ -82,7 +81,6 @@ const Header = () => {
               </Link>
             )}
           </div>
-          <SocialLinks />
         </div>
         <span className={styles.profileIcon}>
           <ProfileIcon />
