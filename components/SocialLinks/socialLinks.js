@@ -31,6 +31,19 @@ const SocialLinks = ({ className }) => {
           height={24}
         />
       </Link>
+      <Link 
+        href="https://www.youtube.com/@SublimeGlowStudio" 
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.socialLink}
+      >
+        <Image
+          src="/youtube-icon.svg"
+          alt="YouTube"
+          width={24}
+          height={24}
+        />
+      </Link>
     </div>
   );
 };
