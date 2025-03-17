@@ -30,14 +30,10 @@ const AppointmentsPage = () => {
           );
           
           const querySnapshot = await getDocs(q);
-          const appointmentsData = querySnapshot.docs.map(doc => {
-            const data = doc.data();
-            return {
-              id: doc.id,
-              ...data,
-              date: data.date instanceof Date ? data.date : new Date(data.date)
-            };
-          });
+          const appointmentsData = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
 
           setAppointments(appointmentsData);
         } catch (err) {
@@ -52,15 +48,28 @@ const AppointmentsPage = () => {
     fetchAppointments();
   }, [user, loading, router]);
 
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('es-MX', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric'
-    });
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "Fecha no especificada";
+    try {
+      // The date is stored in YYYY-MM-DD format
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      
+      return date.toLocaleDateString("es-ES", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Fecha inválida";
+    }
+  };
+
+  const formatTime = (time) => {
+    if (!time) return "Hora no especificada";
+    return time.slice(0, 5);
   };
 
   const getAppointmentStatus = (appointment) => {
@@ -109,14 +118,14 @@ const AppointmentsPage = () => {
                     <span className={`${styles.status} ${status.className}`}>
                       {status.text}
                     </span>
-                    <time dateTime={appointment.date.toISOString()}>
+                    <time dateTime={appointment.date}>
                       {formatDate(appointment.date)}
                     </time>
                   </div>
                   
                   <div className={styles.appointmentDetails}>
                     <h3>{appointment.service}</h3>
-                    <p className={styles.time}>Hora: {appointment.startTime}</p>
+                    <p className={styles.time}>Hora: {formatTime(appointment.startTime)}</p>
                     {appointment.couponId && (
                       <div className={styles.couponInfo}>
                         <span>Cupón aplicado con </span>

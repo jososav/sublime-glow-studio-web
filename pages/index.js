@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import ServicesSection from "../components/ServicesSection/servicesSection";
+import LocationMap from "../components/LocationMap/locationMap";
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
 import { useAuthentication } from "../providers/Authentication/authentication";
@@ -138,6 +139,7 @@ export default function Home() {
         </section>
 
         <ServicesSection />
+        <LocationMap />
       </main>
     </>
   );
