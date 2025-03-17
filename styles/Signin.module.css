@@ -1,3 +1,167 @@
+.authContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--background-light);
+}
+
+.authCard {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--malta-light);
+}
+
+.tab {
+  flex: 1;
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab:hover {
+  color: var(--text);
+  background: var(--background-light);
+}
+
+.activeTab {
+  color: var(--cotton-candy);
+  border-bottom: 3px solid var(--cotton-candy);
+}
+
+.form {
+  padding: 2rem;
+}
+
+.formGroup {
+  margin-bottom: 1.25rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 0.875rem;
+  border: 2px solid var(--malta-light);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.formGroup input:focus {
+  border-color: var(--cotton-candy);
+  box-shadow: 0 0 0 3px var(--cotton-candy-light);
+  outline: none;
+}
+
+.passwordHint {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--text-light);
+  font-size: 0.875rem;
+}
+
+.confirm {
+  width: 100%;
+  background: var(--cotton-candy);
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.confirm:hover {
+  background: var(--cotton-candy-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.confirm:disabled {
+  background: var(--malta-light);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error {
+  background: var(--error-light);
+  color: var(--error);
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* DatePicker specific styles */
+.datePickerWrapper {
+  width: 100%;
+}
+
+.datePickerWrapper > div {
+  width: 100%;
+}
+
+.datePickerWrapper input {
+  width: 100%;
+  padding: 0.875rem;
+  border: 2px solid var(--malta-light);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text);
+  background: white;
+}
+
+.datePickerWrapper input:focus {
+  border-color: var(--cotton-candy);
+  box-shadow: 0 0 0 3px var(--cotton-candy-light);
+  outline: none;
+}
+
+@media (max-width: 640px) {
+  .authContainer {
+    padding: 1rem;
+  }
+
+  .authCard {
+    border-radius: 12px;
+  }
+
+  .form {
+    padding: 1.5rem;
+  }
+
+  .tab {
+    padding: 0.875rem;
+    font-size: 1rem;
+  }
+}
+
 .wrapper {
   max-width: 500px;
   margin: 2rem auto;
@@ -28,24 +192,6 @@
   color: var(--text-light);
 }
 
-.confirm {
-  background: var(--cotton-candy);
-  color: var(--text);
-  padding: 1rem;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
-}
-
-.confirm:hover {
-  background: var(--cotton-candy-dark);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
 .login {
   text-align: center;
   margin: 2rem auto;
@@ -71,24 +217,6 @@
   font-weight: 700;
 }
 
-.error {
-  color: var(--error);
-  text-align: center;
-  margin-top: 1rem;
-  font-size: 0.9rem;
-}
-
-@media (max-width: 640px) {
-  .wrapper {
-    margin: 1rem;
-    padding: 1.5rem;
-  }
-
-  .formTitle {
-    font-size: 1.75rem;
-  }
-}
-
 .container {
   display: flex;
   flex-direction: column;
@@ -98,62 +226,8 @@
   padding: 2rem;
 }
 
-.form {
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
 .form h1 {
   margin-bottom: 2rem;
   text-align: center;
   color: var(--text);
-}
-
-.formGroup {
-  margin-bottom: 1.5rem;
-}
-
-.formGroup label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--text);
-  font-weight: 500;
-}
-
-.formGroup input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--malta-light);
-  border-radius: 8px;
-  font-size: 1rem;
-  color: var(--text);
-}
-
-/* DatePicker specific styles */
-.datePickerWrapper {
-  width: 100%;
-}
-
-.datePickerWrapper > div {
-  width: 100%;
-}
-
-.datePickerWrapper input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--malta-light);
-  border-radius: 8px;
-  font-size: 1rem;
-  color: var(--text);
-  background-color: var(--background);
-}
-
-.datePickerWrapper input:focus {
-  border-color: var(--cotton-candy);
-  box-shadow: 0 0 0 3px var(--cotton-candy-light);
-  outline: none;
 }
