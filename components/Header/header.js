@@ -75,11 +75,6 @@ const Header = () => {
             <Link href="/promociones" className={styles.navLink}>
               Promociones
             </Link>
-            {user && (
-              <Link href="/profile" className={styles.navLink}>
-                Mi Perfil
-              </Link>
-            )}
           </div>
         </div>
         <span className={styles.profileIcon}>

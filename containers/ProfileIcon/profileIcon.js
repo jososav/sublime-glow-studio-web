@@ -1,5 +1,6 @@
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { FiUser } from "react-icons/fi";
+import { FiUser, FiLogOut, FiUser as FiProfile } from "react-icons/fi";
 
 import styles from "./profileIcon.module.css";
 import Avatar from "../../components/Avatar/avatar";
@@ -8,6 +9,39 @@ import { useAuthentication } from "../../providers/Authentication/authentication
 
 export default function ProfileIcon() {
   const { user, userData, loading } = useAuthentication();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+  const avatarRef = useRef(null);
+
+  // Reset dropdown state when user changes
+  useEffect(() => {
+    setShowDropdown(false);
+  }, [user, userData]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current && 
+        !dropdownRef.current.contains(event.target) &&
+        !avatarRef.current.contains(event.target)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Close dropdown on route change
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setShowDropdown(false);
+    };
+
+    window.addEventListener('popstate', handleRouteChange);
+    return () => window.removeEventListener('popstate', handleRouteChange);
+  }, []);
 
   if (loading) {
     return (
@@ -18,9 +52,39 @@ export default function ProfileIcon() {
   }
 
   return userData ? (
-    <button onClick={logout}>
-      <Avatar user={userData} />
-    </button>
+    <div className={styles.profileContainer}>
+      <button 
+        ref={avatarRef}
+        className={styles.avatarButton}
+        onClick={() => setShowDropdown(!showDropdown)}
+        aria-label="Menu de usuario"
+      >
+        <Avatar user={userData} />
+      </button>
+      
+      {showDropdown && (
+        <div ref={dropdownRef} className={styles.dropdown}>
+          <Link 
+            href="/profile" 
+            className={styles.dropdownItem}
+            onClick={() => setShowDropdown(false)}
+          >
+            <FiProfile size={18} />
+            <span>Mi Perfil</span>
+          </Link>
+          <button 
+            onClick={() => {
+              setShowDropdown(false);
+              logout();
+            }} 
+            className={styles.dropdownItem}
+          >
+            <FiLogOut size={18} />
+            <span>Cerrar Sesión</span>
+          </button>
+        </div>
+      )}
+    </div>
   ) : (
     <Link href={"signin"}>
       <div className={styles.wrapper}>
