@@ -11,28 +11,47 @@
 }
 
 .heroSection {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 4rem;
+  padding: 6rem 2rem;
+  background-image: url('/manipedi.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
-.heroImage {
-  margin: 2rem 0;
-  position: relative;
-  box-shadow: 
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+.heroSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(2px);
 }
 
 .title {
+  position: relative;
   font-size: 2.5rem;
   color: var(--text);
   margin-bottom: 1.5rem;
   font-weight: 900;
+  text-align: center;
+  max-width: 800px;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .subtitle {
+  position: relative;
   font-size: 1.8rem;
   color: var(--text-light);
   margin-bottom: 2rem;
@@ -40,14 +59,20 @@
 }
 
 .description {
+  position: relative;
   max-width: 800px;
   margin: 0 auto 3rem;
   font-size: 1.1rem;
   color: var(--text-light);
   line-height: 1.8;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .ctaContainer {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -82,8 +107,13 @@
 }
 
 @media (max-width: 768px) {
+  .heroSection {
+    padding: 4rem 1rem;
+  }
+
   .title {
     font-size: 2rem;
+    padding: 1.5rem;
   }
 
   .subtitle {
@@ -92,6 +122,6 @@
 
   .description {
     font-size: 1rem;
-    padding: 0 1rem;
+    padding: 1.5rem;
   }
 }
