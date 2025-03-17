@@ -91,7 +91,7 @@ export default function Home() {
       <main className={styles.main}>
         <section className={styles.wrapper}>
           <div className={styles.heroSection}>
-            <h1 className={styles.title}>Manicure y Pedicure Profesional en Sublime Glow Studio</h1>
+            <h1 className={styles.title}>Sublime Glow Studio</h1>
             
             <div className={styles.heroImage}>
               <Image

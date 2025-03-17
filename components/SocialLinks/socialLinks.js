@@ -6,6 +6,19 @@ const SocialLinks = ({ className }) => {
   return (
     <div className={`${styles.socialLinks} ${className || ''}`}>
       <Link 
+        href="https://www.facebook.com/people/Sublime-Glow-Studio/61574115724694/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.socialLink}
+      >
+        <Image
+          src="/facebook-icon.svg"
+          alt="Facebook"
+          width={24}
+          height={24}
+        />
+      </Link>
+      <Link 
         href="https://www.instagram.com/sublimeglowstudio" 
         target="_blank"
         rel="noopener noreferrer"

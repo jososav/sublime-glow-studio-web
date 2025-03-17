@@ -1,6 +1,5 @@
 /* React DatePicker Global Styles */
 .react-datepicker {
-  font-family: inherit;
   border-color: var(--malta-light);
   background-color: var(--background);
 }
@@ -40,4 +39,4 @@
 
 .react-datepicker__year-option:hover {
   background-color: var(--cotton-candy-light);
-} 
+}

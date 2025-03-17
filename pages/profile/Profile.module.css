@@ -205,23 +205,23 @@
 }
 
 .finalized {
-  background-color: #C6F6D5;
-  color: #2F855A;
+  background-color: #c6f6d5;
+  color: #2f855a;
 }
 
 .cancelled {
-  background-color: #FED7D7;
-  color: #C53030;
+  background-color: #fed7d7;
+  color: #c53030;
 }
 
 .confirmed {
-  background-color: #BEE3F8;
-  color: #2B6CB0;
+  background-color: #bee3f8;
+  color: #2b6cb0;
 }
 
 .pending {
-  background-color: #FEEBC8;
-  color: #C05621;
+  background-color: #feebc8;
+  color: #c05621;
 }
 
 .appointmentDetails {
@@ -235,7 +235,7 @@
 }
 
 .time {
-  color: #4A5568;
+  color: #4a5568;
   font-size: 0.9rem;
   margin: 0.5rem 0;
 }
@@ -337,7 +337,6 @@
 }
 
 .couponCode {
-  font-family: monospace;
   font-size: 1.1rem;
   color: #2d3748;
   margin-bottom: 0.5rem;
@@ -349,7 +348,8 @@
   margin-bottom: 0.5rem;
 }
 
-.expiration, .usedDate {
+.expiration,
+.usedDate {
   color: #718096;
   font-size: 0.875rem;
   margin-top: 0.5rem;
@@ -390,8 +390,8 @@
   .couponGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .couponCard {
     margin-bottom: 1rem;
   }
-} 
+}

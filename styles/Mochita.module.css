@@ -492,7 +492,7 @@
 }
 
 .serviceCard::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -852,7 +852,6 @@
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--text);
-  font-family: monospace;
   background: #f1f5f9;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -1360,4 +1359,4 @@
   .filterGroup {
     flex: 1;
   }
-} 
+}
