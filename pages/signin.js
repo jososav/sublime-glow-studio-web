@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../config/firebase";
@@ -13,10 +13,13 @@ const AuthPage = () => {
   const { user } = useAuthentication();
   const [activeTab, setActiveTab] = useState("login");
   const [error, setError] = useState("");
-
-  if (user?.uid) {
-    router.replace("/");
-  }
+  
+  useEffect(() => {
+    if (user?.uid && router.isReady) {
+      const redirectPath = router.query.redirect || "/";
+      router.replace(redirectPath);
+    }
+  }, [user, router.isReady, router]);
 
   const [form, setForm] = useState({
     email: "",

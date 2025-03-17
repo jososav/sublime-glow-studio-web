@@ -8,6 +8,7 @@
   "dependencies": {
     "firebase": "^11.4.0",
     "next": "latest",
+    "nookies": "^2.5.2",
     "qrcode.react": "^4.2.0",
     "react": "latest",
     "react-datepicker": "^8.1.0",

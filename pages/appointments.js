@@ -15,7 +15,7 @@ import styles from "../styles/Appointments.module.css";
 
 const Appointments = () => {
   const router = useRouter();
-  const { user, userData } = useAuthentication();
+  const { user, userData, loading } = useAuthentication();
   const {
     services,
     schedule,
@@ -32,6 +32,13 @@ const Appointments = () => {
   const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!loading && !user) {
+      const currentPath = router.asPath;
+      router.push(`/signin?redirect=${encodeURIComponent(currentPath)}`);
+    }
+  }, [user, loading, router]);
 
   const handleCreateAppointment = async () => {
     if (!selectedService.id || !selectedDate || !selectedSlot) {
@@ -57,7 +64,6 @@ const Appointments = () => {
         status: "pending"
       };
 
-      // Add coupon information if a coupon is selected
       if (selectedCoupon) {
         appointmentData.couponId = selectedCoupon.id;
         appointmentData.couponAssignmentId = selectedCoupon.assignmentId;
@@ -69,7 +75,6 @@ const Appointments = () => {
       if (appointment) {
         const result = await saveAppointment(appointment);
         if (result.success) {
-          // If a coupon was used, update its status
           if (selectedCoupon) {
             await updateDoc(doc(db, "couponAssignments", selectedCoupon.assignmentId), {
               status: "used",
@@ -79,7 +84,6 @@ const Appointments = () => {
           }
           resetScheduling();
           setSelectedCoupon(null);
-          // Redirect to profile appointments page
           router.push('/profile/appointments');
         } else if (result.error) {
           setError(result.error);
@@ -93,8 +97,12 @@ const Appointments = () => {
     }
   };
 
-  if (!user || !userData) {
+  if (loading) {
     return <div className={styles.loading}>Cargando...</div>;
+  }
+
+  if (!user || !userData) {
+    return null;
   }
 
   return (
@@ -183,23 +191,5 @@ const Appointments = () => {
     </div>
   );
 };
-
-export async function getServerSideProps(context) {
-  const { req } = context;
-  const sessionCookie = req.cookies.session || '';
-
-  if (!sessionCookie) {
-    return {
-      redirect: {
-        destination: '/signin',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {}
-  };
-}
 
 export default Appointments;
