@@ -14,16 +14,30 @@
   --background-alt: #f7f8fa;
   --error: #dc2626;
   --success: #38a169;
+  --font-family: "Merienda", cursive;
 }
 
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: "Merienda", cursive;
+  font-family: var(--font-family);
   background-color: var(--background);
   color: var(--text);
   line-height: 1.6;
+}
+
+/* Apply Merienda font to all text elements */
+* {
+  box-sizing: border-box;
+  font-family: var(--font-family);
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-family);
 }
 
 .app-container {
@@ -52,10 +66,6 @@ a:hover {
 
 p {
   margin: 0 0 1rem 0;
-}
-
-* {
-  box-sizing: border-box;
 }
 
 img {
@@ -105,4 +115,22 @@ h6 {
 
 .react-datepicker__input-container {
   width: 100%;
+}
+
+/* Force Merienda font on all text elements */
+span,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+input,
+select,
+textarea,
+label,
+a {
+  font-family: var(--font-family) !important;
 }
