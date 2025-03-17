@@ -184,4 +184,22 @@ const Appointments = () => {
   );
 };
 
+export async function getServerSideProps(context) {
+  const { req } = context;
+  const sessionCookie = req.cookies.session || '';
+
+  if (!sessionCookie) {
+    return {
+      redirect: {
+        destination: '/signin',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {}
+  };
+}
+
 export default Appointments;
