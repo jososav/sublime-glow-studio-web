@@ -379,7 +379,7 @@ export const useAppointmentsList = (userId) => {
       }
 
       // Send notification to admin
-      const adminEmail = "carolvek52@gmail.com";
+      const adminEmail = "sublimeglows@gmail.com";
       if (adminEmail) {
         const adminEmailData = appointmentCancelledAdminTemplate(appointmentData, userData);
         await sendEmail(

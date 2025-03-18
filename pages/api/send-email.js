@@ -191,7 +191,7 @@ export default async function handler(req, res) {
 
       // Allow sending to the authenticated user's email or the admin email
       // For admin tokens, allow sending to any email
-      if (decodedToken.email !== 'admin@firebase.internal' && to !== decodedToken.email && to !== 'carolvek52@gmail.com') {
+      if (decodedToken.email !== 'admin@firebase.internal' && to !== decodedToken.email && to !== 'sublimeglows@gmail.com') {
         console.log('Unauthorized email attempt:', to, 'by user:', decodedToken.email);
         return res.status(403).json({ message: 'No tienes permiso para enviar emails a esta dirección' });
       }

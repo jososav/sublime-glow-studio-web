@@ -70,7 +70,7 @@ export const saveAppointment = async (appointment) => {
     // Send email to admin
     const adminEmailTemplate = appointmentCreatedAdminTemplate(appointment, userData);
     await sendEmail(
-      "carolvek52@gmail.com",
+      "sublimeglows@gmail.com",
       adminEmailTemplate.subject,
       adminEmailTemplate.text,
       adminEmailTemplate.html
