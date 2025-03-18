@@ -126,9 +126,19 @@ El equipo de Sublime Glow Studio
 };
 
 export default async function handler(req, res) {
+  console.log('Cron job started at:', new Date().toISOString());
+  console.log('Authorization header:', req.headers.authorization);
+  console.log('Expected authorization:', `Bearer ${process.env.CRON_SECRET_KEY}`);
+  
   // Verify the request is from Vercel Cron
   if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET_KEY}`) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    console.log('Unauthorized request - invalid CRON_SECRET_KEY');
+    return res.status(401).json({ 
+      error: 'Unauthorized',
+      details: 'Invalid CRON_SECRET_KEY',
+      received: req.headers.authorization,
+      expected: `Bearer ${process.env.CRON_SECRET_KEY}`
+    });
   }
 
   try {
