@@ -21,8 +21,13 @@ export const sendEmail = async (to, subject, text, html, token = null) => {
       }
     }
 
+    // Determine the base URL based on the environment
+    const baseUrl = typeof window !== 'undefined' 
+      ? '' // Client-side: use relative URL
+      : process.env.NEXT_PUBLIC_BASE_URL || 'https://www.sublimeglowstudio.com'; // Server-side: use absolute URL
+
     console.log('Sending email request to API...');
-    const response = await fetch('/api/send-email', {
+    const response = await fetch(`${baseUrl}/api/send-email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
