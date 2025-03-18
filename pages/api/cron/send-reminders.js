@@ -1,10 +1,22 @@
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../config/firebase";
-import { sendEmail } from "../../../helpers/sendEmail";
-import { initAdmin, getAdminAuth } from '../../../config/firebase-admin';
+import { initAdmin, getAdminAuth, getAdminDb } from '../../../config/firebase-admin';
+import nodemailer from 'nodemailer';
+import { FieldValue } from "firebase/firestore";
 
 // Initialize Firebase Admin
 initAdmin();
+
+// Create transporter
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_APP_PASSWORD
+  }
+});
 
 const appointmentReminderTemplate = (appointment, userData) => {
   const formatDate = (dateStr) => {
@@ -151,20 +163,20 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Get tomorrow's date in YYYY-MM-DD format in Costa Rica timezone
-    const today = new Date();
-    // Convert to Costa Rica timezone (UTC-6)
-    const costaRicaOffset = -6 * 60; // -6 hours in minutes
-    const localOffset = today.getTimezoneOffset();
-    const totalOffset = costaRicaOffset + localOffset;
-    
-    // Adjust the date to Costa Rica timezone
-    const costaRicaDate = new Date(today.getTime() + (totalOffset * 60 * 1000));
-    const tomorrow = new Date(costaRicaDate);
-    tomorrow.setDate(costaRicaDate.getDate() + 1);
+    // Get tomorrow's date in Costa Rica timezone (UTC-6)
+    const now = new Date();
+    // Adjust for Costa Rica timezone (UTC-6)
+    const costaRicaOffset = -6 * 60 * 60 * 1000; // -6 hours in milliseconds
+    const costaRicaNow = new Date(now.getTime() + costaRicaOffset);
+    const tomorrow = new Date(costaRicaNow);
+    tomorrow.setDate(costaRicaNow.getDate() + 1);
     
     // Format the date in YYYY-MM-DD
     const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+    console.log('Current UTC time:', now.toISOString());
+    console.log('Current Costa Rica time:', new Date(now.getTime() + costaRicaOffset).toISOString());
+    console.log('Looking for appointments on:', tomorrowStr);
 
     // Query confirmed appointments for tomorrow
     const appointmentsRef = collection(db, "appointments");
@@ -175,6 +187,7 @@ export default async function handler(req, res) {
     );
 
     const querySnapshot = await getDocs(q);
+    console.log('Found appointments:', querySnapshot.size);
     
     // Collect all unique user IDs
     const userIds = new Set();
@@ -193,9 +206,11 @@ export default async function handler(req, res) {
 
     await Promise.all(userPromises);
 
-    // Get a custom token for the admin user
-    const adminAuth = getAdminAuth();
-    const adminToken = await adminAuth.createCustomToken('admin');
+    // Get admin DB for logging
+    const adminDb = getAdminDb();
+    if (!adminDb) {
+      throw new Error('Admin DB not initialized');
+    }
 
     // Send reminder emails
     const emailPromises = querySnapshot.docs.map(async (doc) => {
@@ -204,13 +219,29 @@ export default async function handler(req, res) {
 
       if (appointmentData.email && userData) {
         const emailData = appointmentReminderTemplate(appointmentData, userData);
-        await sendEmail(
-          appointmentData.email,
-          emailData.subject,
-          emailData.text,
-          emailData.html,
-          adminToken
-        );
+        try {
+          // Send email directly using nodemailer
+          await transporter.sendMail({
+            from: `"Sublime Glow Studio" <${process.env.EMAIL_USER}>`,
+            to: appointmentData.email,
+            subject: emailData.subject,
+            text: emailData.text,
+            html: emailData.html
+          });
+
+          // Log the email
+          await adminDb.collection('emailLogs').add({
+            userId: 'admin',
+            to: appointmentData.email,
+            subject: emailData.subject,
+            timestamp: FieldValue.serverTimestamp()
+          });
+
+          console.log('Sent reminder email to:', appointmentData.email);
+        } catch (error) {
+          console.error('Error sending reminder email:', error);
+          // Continue with other emails even if one fails
+        }
       }
     });
 
@@ -219,7 +250,9 @@ export default async function handler(req, res) {
     return res.status(200).json({ 
       success: true, 
       message: `Sent ${querySnapshot.size} reminder emails`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      targetDate: tomorrowStr,
+      currentCostaRicaTime: new Date(now.getTime() + costaRicaOffset).toISOString()
     });
   } catch (error) {
     console.error('Error in send-reminders:', error);

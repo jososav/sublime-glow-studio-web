@@ -145,7 +145,14 @@ export default async function handler(req, res) {
       } catch (error) {
         if (error.code === 'auth/id-token-expired' || error.code === 'auth/invalid-id-token') {
           // If it's not a valid ID token, try to verify as a custom token
-          decodedToken = await adminAuth.verifyIdToken(token);
+          try {
+            // For custom tokens, we need to sign in with the token first
+            const userCredential = await adminAuth.signInWithCustomToken(token);
+            decodedToken = userCredential.user;
+          } catch (customError) {
+            console.error('Custom token verification failed:', customError);
+            throw customError;
+          }
         } else {
           throw error;
         }
