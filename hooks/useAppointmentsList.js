@@ -14,6 +14,8 @@ import {
   serverTimestamp
 } from "firebase/firestore";
 import { db } from "../config/firebase";
+import { appointmentConfirmedTemplate, appointmentCancelledTemplate } from "../helpers/emailTemplates";
+import { sendEmail } from "../helpers/sendEmail";
 
 const APPOINTMENTS_PER_PAGE = 10;
 
@@ -47,11 +49,17 @@ export const useAppointmentsList = (userId) => {
       
       const appointmentsRef = collection(db, "appointments");
 
-      let q = query(
-        appointmentsRef,
-        where("userId", "==", userId),
-        where("status", "in", ["pending", "confirmed"])
-      );
+      let q = query(appointmentsRef);
+
+      // If userId is true, it means we're in admin view
+      if (userId !== true) {
+        q = query(q, where("userId", "==", userId));
+      }
+
+      // Only filter by status if we're not in admin view
+      if (userId !== true) {
+        q = query(q, where("status", "in", ["pending", "confirmed"]));
+      }
 
       if (showOnlyPending) {
         q = query(q, where("status", "==", "pending"));
@@ -190,6 +198,10 @@ export const useAppointmentsList = (userId) => {
       const appointmentData = appointmentDoc.data();
       const userId = appointmentData.userId;
 
+      // Get user data for email
+      const userDoc = await getDoc(doc(db, "users", userId));
+      const userData = userDoc.exists() ? userDoc.data() : null;
+
       // Check previous appointments BEFORE updating status
       if (newStatus === "finalized") {
         // Check if this is the user's first finalized appointment
@@ -287,7 +299,20 @@ export const useAppointmentsList = (userId) => {
         status: newStatus,
         updatedAt: serverTimestamp()
       });
-      
+
+      // Send email notification based on status change
+      if (newStatus === "confirmed") {
+        await sendEmail({
+          to: appointmentData.email,
+          ...appointmentConfirmedTemplate(appointmentData, userData)
+        });
+      } else if (newStatus === "cancelled") {
+        await sendEmail({
+          to: appointmentData.email,
+          ...appointmentCancelledTemplate(appointmentData, userData)
+        });
+      }
+
       // Update local state
       setAppointments(currentAppointments =>
         currentAppointments.map(appointment =>

@@ -83,7 +83,7 @@ export default function Appointments() {
                   <div className={styles.appointmentHeader}>
                     <div>
                       <h3 className={styles.serviceName}>
-                        {appointment.service}
+                        {appointment.serviceData?.name || appointment.service}
                       </h3>
                       <p className={styles.dateTime}>
                         {formatDate(appointment.date)} - {formatTime(appointment.startTime)}

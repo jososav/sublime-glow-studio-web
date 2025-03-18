@@ -245,4 +245,270 @@ Por favor, revisa y confirma la cita lo antes posible.
 </html>
 `
   };
+};
+
+export const appointmentConfirmedTemplate = (appointment, userData) => {
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "Fecha no especificada";
+    try {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      return date.toLocaleDateString("es-ES", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    } catch (error) {
+      return "Fecha inválida";
+    }
+  };
+
+  const formatTime = (time) => {
+    if (!time) return "Hora no especificada";
+    return time.slice(0, 5);
+  };
+
+  return {
+    subject: `¡Tu cita ha sido confirmada! - ${formatDate(appointment.date)}`,
+    text: `
+¡Hola ${userData?.name || 'Usuario'}!
+
+Tu cita ha sido confirmada en Sublime Glow Studio.
+
+Detalles de la cita:
+📅 Fecha: ${formatDate(appointment.date)}
+🕒 Hora: ${formatTime(appointment.startTime)}
+💆‍♀️ Servicio: ${appointment.service}
+${appointment.couponId ? `🎫 Cupón aplicado: ${appointment.discountPercentage}% de descuento` : ''}
+
+Estado: Confirmada ✅
+
+Si necesitas hacer algún cambio o tienes alguna pregunta, no dudes en contactarnos.
+
+¡Gracias por elegir Sublime Glow Studio!
+
+Saludos,
+El equipo de Sublime Glow Studio
+    `,
+    html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+    .content {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .details {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #eee;
+    }
+    .detail-item {
+      margin-bottom: 10px;
+    }
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 4px;
+      background-color: #d4edda;
+      color: #155724;
+      font-weight: bold;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://sublimeglowstudio.com/logo.png" alt="Sublime Glow Studio Logo" class="logo">
+    <h1 style="color: #28a745;">¡Tu cita ha sido confirmada!</h1>
+  </div>
+
+  <div class="content">
+    <p>¡Hola ${userData?.name || 'Usuario'}!</p>
+    <p>Tu cita ha sido confirmada en Sublime Glow Studio.</p>
+  </div>
+
+  <div class="details">
+    <h2>Detalles de la cita:</h2>
+    <div class="detail-item">📅 <strong>Fecha:</strong> ${formatDate(appointment.date)}</div>
+    <div class="detail-item">🕒 <strong>Hora:</strong> ${formatTime(appointment.startTime)}</div>
+    <div class="detail-item">💆‍♀️ <strong>Servicio:</strong> ${appointment.service}</div>
+    ${appointment.couponId ? `<div class="detail-item">🎫 <strong>Cupón aplicado:</strong> ${appointment.discountPercentage}% de descuento</div>` : ''}
+    <div class="detail-item">
+      <strong>Estado:</strong> <span class="status">Confirmada ✅</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <p>Si necesitas hacer algún cambio o tienes alguna pregunta, no dudes en contactarnos.</p>
+  </div>
+
+  <div class="footer">
+    <p>¡Gracias por elegir Sublime Glow Studio!</p>
+    <p>Saludos,<br>El equipo de Sublime Glow Studio</p>
+  </div>
+</body>
+</html>
+    `
+  };
+};
+
+export const appointmentCancelledTemplate = (appointment, userData) => {
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "Fecha no especificada";
+    try {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      return date.toLocaleDateString("es-ES", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    } catch (error) {
+      return "Fecha inválida";
+    }
+  };
+
+  const formatTime = (time) => {
+    if (!time) return "Hora no especificada";
+    return time.slice(0, 5);
+  };
+
+  return {
+    subject: `Tu cita ha sido cancelada - ${formatDate(appointment.date)}`,
+    text: `
+¡Hola ${userData?.name || 'Usuario'}!
+
+Tu cita ha sido cancelada en Sublime Glow Studio.
+
+Detalles de la cita cancelada:
+📅 Fecha: ${formatDate(appointment.date)}
+🕒 Hora: ${formatTime(appointment.startTime)}
+💆‍♀️ Servicio: ${appointment.service}
+${appointment.couponId ? `🎫 Cupón aplicado: ${appointment.discountPercentage}% de descuento` : ''}
+
+Estado: Cancelada ❌
+
+Si deseas agendar una nueva cita, puedes hacerlo a través de nuestra página web.
+
+Si tienes alguna pregunta, no dudes en contactarnos.
+
+Saludos,
+El equipo de Sublime Glow Studio
+    `,
+    html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+    .content {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .details {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #eee;
+    }
+    .detail-item {
+      margin-bottom: 10px;
+    }
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 4px;
+      background-color: #f8d7da;
+      color: #721c24;
+      font-weight: bold;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://sublimeglowstudio.com/logo.png" alt="Sublime Glow Studio Logo" class="logo">
+    <h1 style="color: #dc3545;">Tu cita ha sido cancelada</h1>
+  </div>
+
+  <div class="content">
+    <p>¡Hola ${userData?.name || 'Usuario'}!</p>
+    <p>Tu cita ha sido cancelada en Sublime Glow Studio.</p>
+  </div>
+
+  <div class="details">
+    <h2>Detalles de la cita cancelada:</h2>
+    <div class="detail-item">📅 <strong>Fecha:</strong> ${formatDate(appointment.date)}</div>
+    <div class="detail-item">🕒 <strong>Hora:</strong> ${formatTime(appointment.startTime)}</div>
+    <div class="detail-item">💆‍♀️ <strong>Servicio:</strong> ${appointment.service}</div>
+    ${appointment.couponId ? `<div class="detail-item">🎫 <strong>Cupón aplicado:</strong> ${appointment.discountPercentage}% de descuento</div>` : ''}
+    <div class="detail-item">
+      <strong>Estado:</strong> <span class="status">Cancelada ❌</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <p>Si deseas agendar una nueva cita, puedes hacerlo a través de nuestra página web.</p>
+    <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+  </div>
+
+  <div class="footer">
+    <p>Saludos,<br>El equipo de Sublime Glow Studio</p>
+  </div>
+</body>
+</html>
+    `
+  };
 }; 
