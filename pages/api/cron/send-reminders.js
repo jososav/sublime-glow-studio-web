@@ -147,20 +147,28 @@ El equipo de Sublime Glow Studio
 export default async function handler(req, res) {
   console.log('Cron job started at:', new Date().toISOString());
   console.log('Authorization header:', req.headers.authorization);
-  console.log('Expected authorization:', `Bearer ${process.env.CRON_SECRET_KEY}`);
   
   // In development, allow the request without authorization
   if (process.env.NODE_ENV === 'development') {
     console.log('Development mode - skipping authorization check');
   } else {
     // Verify the request is from Vercel Cron
-    if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET_KEY}`) {
-      console.log('Unauthorized request - invalid CRON_SECRET_KEY');
+    const cronSecret = process.env.CRON_SECRET || process.env.CRON_SECRET_KEY;
+    if (!cronSecret) {
+      console.error('No CRON_SECRET or CRON_SECRET_KEY environment variable set');
+      return res.status(500).json({ 
+        error: 'Server configuration error',
+        details: 'Missing CRON_SECRET environment variable'
+      });
+    }
+
+    if (req.headers.authorization !== `Bearer ${cronSecret}`) {
+      console.log('Unauthorized request - invalid CRON_SECRET');
       return res.status(401).json({ 
         error: 'Unauthorized',
-        details: 'Invalid CRON_SECRET_KEY',
+        details: 'Invalid CRON_SECRET',
         received: req.headers.authorization,
-        expected: `Bearer ${process.env.CRON_SECRET_KEY}`
+        expected: `Bearer ${cronSecret}`
       });
     }
   }
