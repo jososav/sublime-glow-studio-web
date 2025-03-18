@@ -1,20 +1,24 @@
 import { auth } from '../config/firebase';
 
-export const sendEmail = async (to, subject, text, html) => {
+export const sendEmail = async (to, subject, text, html, token = null) => {
   try {
-    // Get the current user
-    const user = auth.currentUser;
-    if (!user) {
-      console.error('No authenticated user found');
-      throw new Error('No hay usuario autenticado');
-    }
+    let finalToken = token;
 
-    // Get a fresh token
-    console.log('Getting fresh token for user:', user.email);
-    const token = await user.getIdToken(true);
-    if (!token) {
-      console.error('Failed to get ID token');
-      throw new Error('Error al obtener el token de autenticación');
+    // Only try to get the current user's token if we're in a client-side context
+    if (!token && typeof window !== 'undefined') {
+      const user = auth.currentUser;
+      if (!user) {
+        console.error('No authenticated user found');
+        throw new Error('No hay usuario autenticado');
+      }
+
+      // Get a fresh token
+      console.log('Getting fresh token for user:', user.email);
+      finalToken = await user.getIdToken(true);
+      if (!finalToken) {
+        console.error('Failed to get ID token');
+        throw new Error('Error al obtener el token de autenticación');
+      }
     }
 
     console.log('Sending email request to API...');
@@ -28,7 +32,7 @@ export const sendEmail = async (to, subject, text, html) => {
         subject,
         text,
         html,
-        token
+        token: finalToken
       }),
     });
 
@@ -43,8 +47,10 @@ export const sendEmail = async (to, subject, text, html) => {
       // Handle specific error cases
       if (response.status === 401) {
         console.error('Authentication error:', data.message);
-        // Force a re-authentication
-        await auth.signOut();
+        // Force a re-authentication only in client-side context
+        if (typeof window !== 'undefined') {
+          await auth.signOut();
+        }
         throw new Error('Sesión expirada. Por favor, vuelve a iniciar sesión.');
       }
       if (response.status === 403) {
@@ -62,8 +68,8 @@ export const sendEmail = async (to, subject, text, html) => {
     return data;
   } catch (error) {
     console.error('Error in sendEmail:', error);
-    // If it's an authentication error, force a re-authentication
-    if (error.message.includes('autenticación') || error.message.includes('sesión')) {
+    // If it's an authentication error, force a re-authentication only in client-side context
+    if (typeof window !== 'undefined' && (error.message.includes('autenticación') || error.message.includes('sesión'))) {
       await auth.signOut();
     }
     throw error;

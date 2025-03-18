@@ -1,6 +1,10 @@
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../config/firebase";
 import { sendEmail } from "../../../helpers/sendEmail";
+import { initAdmin, getAdminAuth } from '../../../config/firebase-admin';
+
+// Initialize Firebase Admin
+initAdmin();
 
 const appointmentReminderTemplate = (appointment, userData) => {
   const formatDate = (dateStr) => {
@@ -130,15 +134,20 @@ export default async function handler(req, res) {
   console.log('Authorization header:', req.headers.authorization);
   console.log('Expected authorization:', `Bearer ${process.env.CRON_SECRET_KEY}`);
   
-  // Verify the request is from Vercel Cron
-  if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET_KEY}`) {
-    console.log('Unauthorized request - invalid CRON_SECRET_KEY');
-    return res.status(401).json({ 
-      error: 'Unauthorized',
-      details: 'Invalid CRON_SECRET_KEY',
-      received: req.headers.authorization,
-      expected: `Bearer ${process.env.CRON_SECRET_KEY}`
-    });
+  // In development, allow the request without authorization
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Development mode - skipping authorization check');
+  } else {
+    // Verify the request is from Vercel Cron
+    if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET_KEY}`) {
+      console.log('Unauthorized request - invalid CRON_SECRET_KEY');
+      return res.status(401).json({ 
+        error: 'Unauthorized',
+        details: 'Invalid CRON_SECRET_KEY',
+        received: req.headers.authorization,
+        expected: `Bearer ${process.env.CRON_SECRET_KEY}`
+      });
+    }
   }
 
   try {
@@ -184,6 +193,10 @@ export default async function handler(req, res) {
 
     await Promise.all(userPromises);
 
+    // Get a custom token for the admin user
+    const adminAuth = getAdminAuth();
+    const adminToken = await adminAuth.createCustomToken('admin');
+
     // Send reminder emails
     const emailPromises = querySnapshot.docs.map(async (doc) => {
       const appointmentData = doc.data();
@@ -195,7 +208,8 @@ export default async function handler(req, res) {
           appointmentData.email,
           emailData.subject,
           emailData.text,
-          emailData.html
+          emailData.html,
+          adminToken
         );
       }
     });
@@ -208,6 +222,7 @@ export default async function handler(req, res) {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
+    console.error('Error in send-reminders:', error);
     return res.status(500).json({ 
       error: 'Error sending reminders',
       details: error.message,
