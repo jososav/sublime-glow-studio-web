@@ -10,7 +10,7 @@ import styles from './Profile.module.css';
 export default function Appointments() {
   const router = useRouter();
   const { user } = useAuthentication();
-  const { appointments, loading, error, cancelAppointment } = useAppointmentsList(user?.uid);
+  const { appointments, loading, error, handleCancelAppointment } = useAppointmentsList(user?.uid);
 
   useEffect(() => {
     if (!user) {
@@ -18,15 +18,6 @@ export default function Appointments() {
       router.push(`/signin?redirect=${encodeURIComponent(currentPath)}`);
     }
   }, [user, router]);
-
-  const handleCancelAppointment = async (appointmentId) => {
-    try {
-      await cancelAppointment(appointmentId);
-      toast.success("Cita cancelada exitosamente");
-    } catch (error) {
-      toast.error("Error al cancelar la cita");
-    }
-  };
 
   if (loading) {
     return (

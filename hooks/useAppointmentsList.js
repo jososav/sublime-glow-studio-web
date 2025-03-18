@@ -14,8 +14,13 @@ import {
   serverTimestamp
 } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { appointmentConfirmedTemplate, appointmentCancelledTemplate } from "../helpers/emailTemplates";
+import { 
+  appointmentConfirmedTemplate, 
+  appointmentCancelledTemplate,
+  appointmentCancelledAdminTemplate 
+} from "../helpers/emailTemplates";
 import { sendEmail } from "../helpers/sendEmail";
+import { toast } from "react-hot-toast";
 
 const APPOINTMENTS_PER_PAGE = 10;
 
@@ -333,6 +338,67 @@ export const useAppointmentsList = (userId) => {
     fetchAppointments();
   };
 
+  const handleCancelAppointment = async (appointmentId) => {
+    try {
+      const appointmentRef = doc(db, "appointments", appointmentId);
+      const appointmentDoc = await getDoc(appointmentRef);
+      
+      if (!appointmentDoc.exists()) {
+        throw new Error("No se encontró la cita");
+      }
+
+      const appointmentData = appointmentDoc.data();
+      
+      // Get user data for email
+      const userDoc = await getDoc(doc(db, "users", appointmentData.userId));
+      const userData = userDoc.exists() ? userDoc.data() : null;
+
+      // Update appointment status
+      await updateDoc(appointmentRef, {
+        status: "cancelled",
+        cancelledAt: new Date().toISOString(),
+        cancelledBy: "user"
+      });
+
+      // Send cancellation email to user
+      if (appointmentData.email && userData) {
+        const emailData = appointmentCancelledTemplate(appointmentData, userData);
+        await sendEmail(
+          appointmentData.email,
+          emailData.subject,
+          emailData.text,
+          emailData.html
+        );
+      }
+
+      // Send notification to admin
+      const adminEmail = "carolvek52@gmail.com";
+      if (adminEmail) {
+        const adminEmailData = appointmentCancelledAdminTemplate(appointmentData, userData);
+        await sendEmail(
+          adminEmail,
+          adminEmailData.subject,
+          adminEmailData.text,
+          adminEmailData.html
+        );
+      }
+
+      // Update local state
+      setAppointments(prevAppointments =>
+        prevAppointments.map(appointment =>
+          appointment.id === appointmentId
+            ? { ...appointment, status: "cancelled" }
+            : appointment
+        )
+      );
+
+      toast.success("Cita cancelada exitosamente");
+    } catch (error) {
+      console.error("Error canceling appointment:", error);
+      toast.error("Error al cancelar la cita");
+    }
+  };
+
   return {
     appointments,
     loading,
@@ -344,6 +410,7 @@ export const useAppointmentsList = (userId) => {
     togglePendingFilter,
     handleStatusChange,
     refreshAppointments,
-    cancelAppointment
+    cancelAppointment,
+    handleCancelAppointment
   };
 }; 
