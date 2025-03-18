@@ -1,6 +1,5 @@
-const _convertToHours = (hour = "00:00") => {
-  const [h, m] = hour.split(":").map(Number);
-
+const _convertToHours = (timeString) => {
+  const [h, m] = timeString.split(":").map(Number);
   return h * 60 + m;
 };
 
@@ -25,47 +24,12 @@ const _calculateEndDate = (timeString, duration) => {
 };
 
 const _formatDate = (date) => {
-  if (!date) {
-    throw new Error('La fecha es requerida');
-  }
-
-  try {
-    let targetDate;
-
-    // If it's already a Date object
-    if (date instanceof Date) {
-      if (isNaN(date.getTime())) {
-        throw new Error('Fecha inválida');
-      }
-      targetDate = date;
-    }
-    // If it's a string
-    else if (typeof date === 'string') {
-      // If it's already in YYYY-MM-DD format
-      if (date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        const [year, month, day] = date.split('-').map(Number);
-        targetDate = new Date(year, month - 1, day);
-      } else {
-        // Try to parse the date string
-        targetDate = new Date(date);
-        if (isNaN(targetDate.getTime())) {
-          throw new Error('Formato de fecha inválido');
-        }
-      }
-    } else {
-      throw new Error('Formato de fecha no soportado');
-    }
-
-    // Format the date in YYYY-MM-DD format using local timezone
-    const year = targetDate.getFullYear();
-    const month = String(targetDate.getMonth() + 1).padStart(2, '0');
-    const day = String(targetDate.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-
-  } catch (error) {
-    console.error('Error formatting date:', error);
-    throw new Error('Error al formatear la fecha. Por favor, selecciona una fecha válida.');
-  }
+  if (!date) return null;
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 export const calculateTimeSlots = (
@@ -91,33 +55,51 @@ export const calculateTimeSlots = (
 
     // Filter appointments to only consider those that affect availability
     const blockedAppointments = existingAppointments.filter(
-      app => ["confirmed", "pending", "finalized"].includes(app.status)
-    );
+      app => ["confirmed", "pending"].includes(app.status)
+    ).map(app => ({
+      ...app,
+      startMinutes: _convertToHours(app.startTime),
+      endMinutes: _convertToHours(app.startTime) + (app.durationMinutes || serviceDuration)
+    }));
+
+    console.log('Blocked appointments:', blockedAppointments.map(app => ({
+      start: app.startTime,
+      end: _convertMinutesToHour(app.endMinutes),
+      status: app.status
+    })));
 
     // Generate slots for this time period
     for (let time = startTime; time <= endTime - serviceDuration; time += 30) {
       let isAvailable = true;
-      const timeStr = _convertMinutesToHour(time);
-      const endTimeStr = _convertMinutesToHour(time + serviceDuration);
+      const slotEndTime = time + serviceDuration;
 
       // Check if the time slot overlaps with any existing appointment
       for (const appointment of blockedAppointments) {
-        const appointmentStart = _convertToHours(appointment.startTime);
-        const appointmentEnd = _convertToHours(appointment.endTime);
+        // Check for overlap
+        const hasOverlap = (
+          (time >= appointment.startMinutes && time < appointment.endMinutes) || // Start during another appointment
+          (slotEndTime > appointment.startMinutes && slotEndTime <= appointment.endMinutes) || // End during another appointment
+          (time <= appointment.startMinutes && slotEndTime >= appointment.endMinutes) // Completely contain another appointment
+        );
 
-        // Check if there's an overlap
-        if (
-          (time >= appointmentStart && time < appointmentEnd) || // Start during another appointment
-          (time + serviceDuration > appointmentStart && time + serviceDuration <= appointmentEnd) || // End during another appointment
-          (time <= appointmentStart && time + serviceDuration >= appointmentEnd) // Completely contain another appointment
-        ) {
+        if (hasOverlap) {
+          console.log('Overlap found:', {
+            proposedSlot: {
+              start: _convertMinutesToHour(time),
+              end: _convertMinutesToHour(slotEndTime)
+            },
+            existingAppointment: {
+              start: appointment.startTime,
+              end: _convertMinutesToHour(appointment.endMinutes)
+            }
+          });
           isAvailable = false;
           break;
         }
       }
 
       if (isAvailable) {
-        slots.push(timeStr);
+        slots.push(_convertMinutesToHour(time));
       }
     }
   }
