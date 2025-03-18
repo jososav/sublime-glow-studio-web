@@ -18,6 +18,9 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// Helper function to delay execution
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 const appointmentReminderTemplate = (appointment, userData) => {
   const formatDate = (dateStr) => {
     if (!dateStr) return "Fecha no especificada";
@@ -212,14 +215,19 @@ export default async function handler(req, res) {
       throw new Error('Admin DB not initialized');
     }
 
-    // Send reminder emails
-    const emailPromises = querySnapshot.docs.map(async (doc) => {
+    // Send reminder emails with delay between each
+    console.log('Starting to send emails...');
+    const results = [];
+    for (const doc of querySnapshot.docs) {
       const appointmentData = doc.data();
       const userData = usersData[appointmentData.userId];
 
       if (appointmentData.email && userData) {
         const emailData = appointmentReminderTemplate(appointmentData, userData);
         try {
+          // Add a 2-second delay between each email
+          await delay(2000);
+
           // Send email directly using nodemailer
           await transporter.sendMail({
             from: `"Sublime Glow Studio" <${process.env.EMAIL_USER}>`,
@@ -238,21 +246,25 @@ export default async function handler(req, res) {
           });
 
           console.log('Sent reminder email to:', appointmentData.email);
+          results.push({ success: true, email: appointmentData.email });
         } catch (error) {
           console.error('Error sending reminder email:', error);
+          results.push({ success: false, email: appointmentData.email, error: error.message });
           // Continue with other emails even if one fails
         }
       }
-    });
+    }
 
-    await Promise.all(emailPromises);
+    const successfulEmails = results.filter(r => r.success).length;
+    const failedEmails = results.filter(r => !r.success).length;
 
     return res.status(200).json({ 
       success: true, 
-      message: `Sent ${querySnapshot.size} reminder emails`,
+      message: `Sent ${successfulEmails} reminder emails (${failedEmails} failed)`,
       timestamp: new Date().toISOString(),
       targetDate: tomorrowStr,
-      currentCostaRicaTime: new Date(now.getTime() + costaRicaOffset).toISOString()
+      currentCostaRicaTime: new Date(now.getTime() + costaRicaOffset).toISOString(),
+      results
     });
   } catch (error) {
     console.error('Error in send-reminders:', error);

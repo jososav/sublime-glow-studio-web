@@ -12,7 +12,7 @@ try {
 
 // Simple in-memory rate limiting
 const rateLimit = new Map();
-const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+const RATE_LIMIT_WINDOW = 2 * 60 * 1000; // 2 minutes
 const MAX_REQUESTS = 5;
 
 const checkRateLimit = (ip) => {
@@ -89,12 +89,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Apply rate limiting
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    if (!checkRateLimit(ip)) {
-      return res.status(429).json({ message: 'Too many requests, please try again later.' });
-    }
-
     const { to, subject, text, html, token } = req.body;
 
     console.log('Received request:', {
@@ -167,6 +161,14 @@ export default async function handler(req, res) {
       if (decodedToken.email !== 'admin@firebase.internal' && to !== decodedToken.email && to !== 'carolvek52@gmail.com') {
         console.log('Unauthorized email attempt:', to, 'by user:', decodedToken.email);
         return res.status(403).json({ message: 'No tienes permiso para enviar emails a esta dirección' });
+      }
+
+      // Only apply rate limiting for non-admin users
+      if (decodedToken.email !== 'admin@firebase.internal') {
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        if (!checkRateLimit(ip)) {
+          return res.status(429).json({ message: 'Too many requests, please try again later.' });
+        }
       }
 
       // Check user's email sending limit
