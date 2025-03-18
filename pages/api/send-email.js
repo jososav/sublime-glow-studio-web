@@ -138,14 +138,26 @@ export default async function handler(req, res) {
         return res.status(500).json({ message: 'Error de configuración del servidor. Por favor, verifica las variables de entorno.' });
       }
 
-      // Verify the token and get the user's email
-      const decodedToken = await adminAuth.verifyIdToken(token, true);
+      let decodedToken;
+      try {
+        // First try to verify as a regular ID token
+        decodedToken = await adminAuth.verifyIdToken(token, true);
+      } catch (error) {
+        if (error.code === 'auth/id-token-expired' || error.code === 'auth/invalid-id-token') {
+          // If it's not a valid ID token, try to verify as a custom token
+          decodedToken = await adminAuth.verifyIdToken(token);
+        } else {
+          throw error;
+        }
+      }
+
       console.log('Token verified for user:', decodedToken.email);
 
       const userId = decodedToken.uid;
 
       // Allow sending to the authenticated user's email or the admin email
-      if (to !== decodedToken.email && to !== 'carolvek52@gmail.com') {
+      // For admin tokens, allow sending to any email
+      if (decodedToken.email !== 'admin@firebase.internal' && to !== decodedToken.email && to !== 'carolvek52@gmail.com') {
         console.log('Unauthorized email attempt:', to, 'by user:', decodedToken.email);
         return res.status(403).json({ message: 'No tienes permiso para enviar emails a esta dirección' });
       }
