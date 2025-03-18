@@ -5,6 +5,7 @@ import "../styles/datepicker.css";
 import { AuthenticationProvider } from "../providers/Authentication/authentication";
 import Header from "../components/Header/header";
 import Footer from "../components/Footer/footer";
+import { Toaster } from "react-hot-toast";
 
 export default function MyApp({ Component, pageProps }) {
   return (
@@ -16,6 +17,7 @@ export default function MyApp({ Component, pageProps }) {
         </main>
         <Footer />
       </div>
+      <Toaster position="top-right" />
     </AuthenticationProvider>
   );
 }

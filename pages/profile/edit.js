@@ -23,7 +23,8 @@ const EditProfilePage = () => {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login');
+      const currentPath = router.asPath;
+      router.push(`/signin?redirect=${encodeURIComponent(currentPath)}`);
       return;
     }
 

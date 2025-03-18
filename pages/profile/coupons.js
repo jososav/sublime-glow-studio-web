@@ -13,7 +13,8 @@ const CouponsPage = () => {
 
   if (loading || loadingCoupons) return <div>Cargando...</div>;
   if (!user) {
-    router.push('/login');
+    const currentPath = router.asPath;
+    router.push(`/signin?redirect=${encodeURIComponent(currentPath)}`);
     return null;
   }
 

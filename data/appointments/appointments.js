@@ -7,9 +7,13 @@ import {
   serverTimestamp,
   doc,
   updateDoc,
+  getDoc,
+  Timestamp,
 } from "firebase/firestore";
 
 import { db } from "../../config/firebase";
+import { appointmentCreatedTemplate, appointmentCreatedAdminTemplate } from "../../helpers/emailTemplates";
+import { sendEmail } from "../../helpers/sendEmail";
 
 const MAX_PENDING_APPOINTMENTS = 3;
 
@@ -32,6 +36,7 @@ export const getPendingAppointmentsCount = async (userId) => {
 
 export const saveAppointment = async (appointment) => {
   try {
+    // Check for existing pending appointments
     const pendingCount = await getPendingAppointmentsCount(appointment.userId);
     
     if (pendingCount >= MAX_PENDING_APPOINTMENTS) {
@@ -41,15 +46,43 @@ export const saveAppointment = async (appointment) => {
       };
     }
 
-    const appointmentRef = await addDoc(collection(db, "appointments"), {
+    // Add the appointment to Firestore
+    const appointmentsRef = collection(db, "appointments");
+    const docRef = await addDoc(appointmentsRef, {
       ...appointment,
-      createdAt: serverTimestamp()
+      status: "pending",
+      createdAt: Timestamp.now(),
     });
 
-    return { success: true, appointmentId: appointmentRef.id };
+    // Get user data for email personalization
+    const userDoc = await getDoc(doc(db, "users", appointment.userId));
+    const userData = userDoc.exists() ? userDoc.data() : null;
+
+    // Send email to user
+    const userEmailTemplate = appointmentCreatedTemplate(appointment, userData);
+    await sendEmail(
+      appointment.email,
+      userEmailTemplate.subject,
+      userEmailTemplate.text,
+      userEmailTemplate.html
+    );
+
+    // Send email to admin
+    const adminEmailTemplate = appointmentCreatedAdminTemplate(appointment, userData);
+    await sendEmail(
+      "carolvek52@gmail.com",
+      adminEmailTemplate.subject,
+      adminEmailTemplate.text,
+      adminEmailTemplate.html
+    );
+
+    return { success: true, appointmentId: docRef.id };
   } catch (error) {
-    console.error("Error al crear la cita: ", error);
-    return { success: false, error: "Error al crear la cita" };
+    console.error("Error saving appointment:", error);
+    return { 
+      success: false, 
+      error: "Error al crear la cita. Por favor, intenta nuevamente más tarde." 
+    };
   }
 };
 

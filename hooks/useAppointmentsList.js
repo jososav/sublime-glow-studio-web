@@ -30,7 +30,7 @@ const getRewardCouponCode = (completedReferrals) => {
   return REFERRAL_REWARDS[cyclePosition];
 };
 
-export const useAppointmentsList = (isAdmin) => {
+export const useAppointmentsList = (userId) => {
   const [appointments, setAppointments] = useState([]);
   const [lastVisible, setLastVisible] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,8 +49,8 @@ export const useAppointmentsList = (isAdmin) => {
 
       let q = query(
         appointmentsRef,
-        orderBy("date", "desc"),
-        orderBy("startTime", "desc")
+        where("userId", "==", userId),
+        where("status", "in", ["pending", "confirmed"])
       );
 
       if (showOnlyPending) {
@@ -146,11 +146,27 @@ export const useAppointmentsList = (isAdmin) => {
     }
   };
 
+  const cancelAppointment = async (appointmentId) => {
+    try {
+      const appointmentRef = doc(db, "appointments", appointmentId);
+      await updateDoc(appointmentRef, {
+        status: "cancelled",
+        cancelledAt: new Date().toISOString(),
+      });
+      
+      // Actualizar la lista de citas
+      setAppointments(appointments.filter(apt => apt.id !== appointmentId));
+    } catch (err) {
+      console.error("Error cancelling appointment:", err);
+      throw new Error("Error al cancelar la cita");
+    }
+  };
+
   useEffect(() => {
-    if (isAdmin) {
+    if (userId) {
       fetchAppointments();
     }
-  }, [showOnlyPending, isAdmin]);
+  }, [showOnlyPending, userId]);
 
   const loadMore = () => {
     if (!hasMore || isLoading) return;
@@ -302,5 +318,6 @@ export const useAppointmentsList = (isAdmin) => {
     togglePendingFilter,
     handleStatusChange,
     refreshAppointments,
+    cancelAppointment
   };
 }; 
