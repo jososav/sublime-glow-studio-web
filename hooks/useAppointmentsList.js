@@ -300,17 +300,18 @@ export const useAppointmentsList = (userId) => {
         updatedAt: serverTimestamp()
       });
 
-      // Send email notification based on status change
-      if (newStatus === "confirmed") {
-        await sendEmail({
-          to: appointmentData.email,
-          ...appointmentConfirmedTemplate(appointmentData, userData)
-        });
-      } else if (newStatus === "cancelled") {
-        await sendEmail({
-          to: appointmentData.email,
-          ...appointmentCancelledTemplate(appointmentData, userData)
-        });
+      // Send email notification
+      if (appointmentData.email && userData) {
+        const emailData = newStatus === "confirmed" 
+          ? appointmentConfirmedTemplate(appointmentData, userData)
+          : appointmentCancelledTemplate(appointmentData, userData);
+
+        await sendEmail(
+          appointmentData.email,
+          emailData.subject,
+          emailData.text,
+          emailData.html
+        );
       }
 
       // Update local state

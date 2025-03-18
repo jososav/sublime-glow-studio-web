@@ -126,8 +126,11 @@ El equipo de Sublime Glow Studio
 };
 
 export default async function handler(req, res) {
+  console.log('Cron job started at:', new Date().toISOString());
+  
   // Verify the request is from Vercel Cron
   if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET_KEY}`) {
+    console.log('Unauthorized request - invalid CRON_SECRET_KEY');
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -136,6 +139,7 @@ export default async function handler(req, res) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowStr = tomorrow.toISOString().split('T')[0];
+    console.log('Looking for appointments on:', tomorrowStr);
 
     // Query confirmed appointments for tomorrow
     const appointmentsRef = collection(db, "appointments");
@@ -146,12 +150,14 @@ export default async function handler(req, res) {
     );
 
     const querySnapshot = await getDocs(q);
+    console.log(`Found ${querySnapshot.size} appointments for tomorrow`);
     
     // Collect all unique user IDs
     const userIds = new Set();
     querySnapshot.docs.forEach(doc => {
       userIds.add(doc.data().userId);
     });
+    console.log(`Found ${userIds.size} unique users`);
 
     // Batch fetch users
     const usersData = {};
@@ -163,6 +169,7 @@ export default async function handler(req, res) {
     });
 
     await Promise.all(userPromises);
+    console.log('Fetched user data for all appointments');
 
     // Send reminder emails
     const emailPromises = querySnapshot.docs.map(async (doc) => {
@@ -170,24 +177,34 @@ export default async function handler(req, res) {
       const userData = usersData[appointmentData.userId];
 
       if (appointmentData.email && userData) {
-        await sendEmail({
-          to: appointmentData.email,
-          ...appointmentReminderTemplate(appointmentData, userData)
-        });
+        console.log(`Sending reminder to: ${appointmentData.email}`);
+        const emailData = appointmentReminderTemplate(appointmentData, userData);
+        await sendEmail(
+          appointmentData.email,
+          emailData.subject,
+          emailData.text,
+          emailData.html
+        );
+        console.log(`Successfully sent reminder to: ${appointmentData.email}`);
+      } else {
+        console.log(`Skipping email for appointment - missing email or user data`);
       }
     });
 
     await Promise.all(emailPromises);
+    console.log('Cron job completed successfully');
 
     return res.status(200).json({ 
       success: true, 
-      message: `Sent ${querySnapshot.size} reminder emails` 
+      message: `Sent ${querySnapshot.size} reminder emails`,
+      timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error('Error sending reminders:', error);
+    console.error('Error in cron job:', error);
     return res.status(500).json({ 
       error: 'Error sending reminders',
-      details: error.message 
+      details: error.message,
+      timestamp: new Date().toISOString()
     });
   }
 } 
