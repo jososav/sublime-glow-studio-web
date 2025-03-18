@@ -99,7 +99,7 @@ El equipo de Sublime Glow Studio
 </head>
 <body>
   <div class="header">
-    <img src="https://sublimeglowstudio.com/logo.png" alt="Sublime Glow Studio Logo" class="logo">
+    <img src="https://sublimeglowstudio.com/logo.jpeg" alt="Sublime Glow Studio Logo" class="logo">
     <h1>¡Tu cita ha sido creada!</h1>
   </div>
 
@@ -219,7 +219,7 @@ Por favor, revisa y confirma la cita lo antes posible.
 </head>
 <body>
   <div class="header">
-    <img src="https://sublimeglowstudio.com/logo.png" alt="Sublime Glow Studio Logo" class="logo">
+    <img src="https://sublimeglowstudio.com/logo.jpeg" alt="Sublime Glow Studio Logo" class="logo">
     <h1 style="color: #e91e63;">Nueva Cita Pendiente</h1>
   </div>
 
@@ -346,7 +346,7 @@ El equipo de Sublime Glow Studio
 </head>
 <body>
   <div class="header">
-    <img src="https://sublimeglowstudio.com/logo.png" alt="Sublime Glow Studio Logo" class="logo">
+    <img src="https://sublimeglowstudio.com/logo.jpeg" alt="Sublime Glow Studio Logo" class="logo">
     <h1 style="color: #28a745;">¡Tu cita ha sido confirmada!</h1>
   </div>
 
@@ -479,7 +479,7 @@ El equipo de Sublime Glow Studio
 </head>
 <body>
   <div class="header">
-    <img src="https://sublimeglowstudio.com/logo.png" alt="Sublime Glow Studio Logo" class="logo">
+    <img src="https://sublimeglowstudio.com/logo.jpeg" alt="Sublime Glow Studio Logo" class="logo">
     <h1 style="color: #dc3545;">Tu cita ha sido cancelada</h1>
   </div>
 
@@ -613,7 +613,7 @@ Sistema de Notificaciones
 </head>
 <body>
   <div class="header">
-    <img src="https://sublimeglowstudio.com/logo.png" alt="Sublime Glow Studio Logo" class="logo">
+    <img src="https://sublimeglowstudio.com/logo.jpeg" alt="Sublime Glow Studio Logo" class="logo">
     <h1 style="color: #dc3545;">Cita Cancelada</h1>
   </div>
 

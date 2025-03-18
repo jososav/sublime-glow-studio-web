@@ -112,7 +112,7 @@ El equipo de Sublime Glow Studio
 </head>
 <body>
   <div class="header">
-    <img src="https://sublimeglowstudio.com/logo.png" alt="Sublime Glow Studio Logo" class="logo">
+    <img src="https://sublimeglowstudio.com/logo.jpeg" alt="Sublime Glow Studio Logo" class="logo">
     <h1 style="color: #ec4899;">Recordatorio de Cita</h1>
   </div>
 
