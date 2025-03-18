@@ -305,18 +305,25 @@ export const useAppointmentsList = (userId) => {
         updatedAt: serverTimestamp()
       });
 
-      // Send email notification
+      // Send email notification with admin privileges
       if (appointmentData.email && userData) {
         const emailData = newStatus === "confirmed" 
           ? appointmentConfirmedTemplate(appointmentData, userData)
           : appointmentCancelledTemplate(appointmentData, userData);
 
-        await sendEmail(
-          appointmentData.email,
-          emailData.subject,
-          emailData.text,
-          emailData.html
-        );
+        try {
+          await sendEmail(
+            appointmentData.email,
+            emailData.subject,
+            emailData.text,
+            emailData.html,
+            'admin' // Pass 'admin' as the token to indicate admin privileges
+          );
+        } catch (error) {
+          console.error('Error sending email:', error);
+          // Don't throw the error, just log it and continue
+          // This way the status change succeeds even if email fails
+        }
       }
 
       // Update local state
