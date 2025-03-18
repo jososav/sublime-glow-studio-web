@@ -1,8 +1,8 @@
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../config/firebase";
 import { initAdmin, getAdminAuth, getAdminDb } from '../../../config/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import nodemailer from 'nodemailer';
-import { FieldValue } from "firebase/firestore";
 
 // Initialize Firebase Admin
 initAdmin();
