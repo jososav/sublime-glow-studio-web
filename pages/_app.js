@@ -13,9 +13,6 @@ export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Track initial page view
-    pageview(window.location.pathname);
-
     // Track page views when route changes
     const handleRouteChange = (url) => {
       pageview(url);
