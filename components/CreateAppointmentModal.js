@@ -76,7 +76,7 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
       if (!isAdmin) {
         const pendingCount = await checkPendingAppointments(formData.userId);
         if (pendingCount >= 3) {
-          setError("El usuario ya tiene el máximo de 3 citas pendientes permitidas");
+          setError("El cliente ya tiene el máximo de 3 citas pendientes permitidas");
           setIsCreating(false);
           return;
         }
@@ -154,14 +154,14 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
         <div className={modalStyles.formGroup}>
           <label>Cliente*:</label>
           {loadingUsers ? (
-            <div>Cargando usuarios...</div>
+            <div>Cargando clientes...</div>
           ) : usersError ? (
             <div className={styles.errorMessage}>
-              Error al cargar usuarios: {usersError}
+              Error al cargar clientes: {usersError}
             </div>
           ) : users.length === 0 ? (
             <div className={styles.errorMessage}>
-              No hay usuarios disponibles. Por favor, crea un usuario primero.
+              No hay clientes disponibles. Por favor, crea un cliente primero.
             </div>
           ) : (
             <select
@@ -195,7 +195,7 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
               <div>Cargando cupones...</div>
             ) : coupons.length === 0 ? (
               <div className={styles.infoMessage}>
-                No hay cupones disponibles para este usuario
+                No hay cupones disponibles para este cliente
               </div>
             ) : (
               <select

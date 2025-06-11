@@ -57,7 +57,7 @@ export default function ProfileIcon() {
         ref={avatarRef}
         className={styles.avatarButton}
         onClick={() => setShowDropdown(!showDropdown)}
-        aria-label="Menu de usuario"
+        aria-label="Menu de cliente"
       >
         <Avatar user={userData} />
       </button>

@@ -9,7 +9,7 @@ export const sendEmail = async (to, subject, text, html, token = null) => {
       const user = auth.currentUser;
       if (!user) {
         console.error('No authenticated user found');
-        throw new Error('No hay usuario autenticado');
+        throw new Error('No hay cliente autenticado');
       }
 
       // Get a fresh token

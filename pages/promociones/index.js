@@ -53,7 +53,7 @@ const PromocionesPage = () => {
           <div className={styles.method}>
             <h3>1. Registrándote con un enlace de referido</h3>
             <p>
-              Cuando te registras usando el enlace de referido de otro usuario, 
+              Cuando te registras usando el enlace de referido de otro cliente, 
               recibirás automáticamente un cupón de bienvenida que podrás usar en tu primera cita.
             </p>
             <div className={styles.couponInfo}>
@@ -67,7 +67,7 @@ const PromocionesPage = () => {
           </div>
 
           <div className={styles.method}>
-            <h3>2. Refiriendo a otros usuarios</h3>
+            <h3>2. Refiriendo a otros clientes</h3>
             <p>
               Por cada persona que se registre usando tu enlace de referido y complete una cita, 
               recibirás un cupón de recompensa. ¡Entre más amigos invites, más cupones puedes ganar!

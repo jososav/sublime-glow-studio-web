@@ -157,12 +157,12 @@ export const CreateCouponModal = ({ onClose, onSuccess }) => {
         </div>
 
         <div className={modalStyles.formGroup}>
-          <label>Asignar a Usuarios:</label>
+          <label>Asignar a Clientes:</label>
           {loadingUsers ? (
-            <div>Cargando usuarios...</div>
+            <div>Cargando clientes...</div>
           ) : usersError ? (
             <div className={styles.errorMessage}>
-              Error al cargar usuarios: {usersError}
+              Error al cargar clientes: {usersError}
             </div>
           ) : (
             <div className={modalStyles.usersList}>
@@ -209,7 +209,7 @@ export const CreateCouponModal = ({ onClose, onSuccess }) => {
           )}
           {users?.length > 0 && selectedUsers.length > 0 && (
             <div className={modalStyles.selectedCount}>
-              {selectedUsers.length} usuarios seleccionados - Total cupones: {
+              {selectedUsers.length} clientes seleccionados - Total cupones: {
                 selectedUsers.reduce((total, userId) => total + (userCounts[userId] || 1), 0)
               }
             </div>

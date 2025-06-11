@@ -125,7 +125,7 @@ export const buildAppointment = ({
   couponAssignmentId,
   discountPercentage
 }) => {
-  if (!userId) throw new Error('El usuario es requerido');
+  if (!userId) throw new Error('El cliente es requerido');
   if (!startTime) throw new Error('La hora es requerida');
   if (!service) throw new Error('El servicio es requerido');
   if (!serviceId) throw new Error('El ID del servicio es requerido');

@@ -75,7 +75,7 @@ const CreateUserModal = ({ onClose, onSuccess }) => {
   return (
     <div className={styles.modalOverlay}>
       <div ref={modalRef} className={styles.modal}>
-        <h2>Crear Nuevo Usuario</h2>
+        <h2>Crear Nuevo Cliente</h2>
         
         {error && (
           <div className={styles.errorMessage}>
@@ -150,7 +150,7 @@ const CreateUserModal = ({ onClose, onSuccess }) => {
             onClick={handleCreateUser}
             disabled={isCreating}
           >
-            {isCreating ? "Creando..." : "Crear Usuario"}
+            {isCreating ? "Creando..." : "Crear cliente"}
           </button>
         </div>
       </div>
@@ -334,12 +334,12 @@ const Users = () => {
     <AdminProtected>
       <div className={styles.container}>
         <div className={styles.header}>
-          <h1>Gestión de Usuarios</h1>
+          <h1>Gestión de Clientes</h1>
           <button 
             className={styles.createButton}
             onClick={() => setShowCreateModal(true)}
           >
-            Crear Nuevo Usuario
+            Crear Nuevo Cliente
           </button>
         </div>
 

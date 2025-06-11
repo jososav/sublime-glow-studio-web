@@ -36,7 +36,7 @@ const ProfilePage = () => {
         <h1 className={styles.title}>Mi Perfil</h1>
         
         <div className={styles.userInfo}>
-          <h2>¡Hola, {userData?.name || user.displayName || 'Usuario'}!</h2>
+          <h2>¡Hola, {userData?.name || user.displayName || 'Cliente'}!</h2>
           <p className={styles.email}>{user.email}</p>
         </div>
 

@@ -127,7 +127,7 @@ const ReferralsPage = () => {
       setReferredUsers(referredUsersData);
     } catch (error) {
       console.error("Error fetching referred users:", error);
-      setError("Error al cargar los usuarios referidos");
+      setError("Error al cargar los clientes referidos");
     } finally {
       setModalLoading(false);
     }
@@ -184,15 +184,15 @@ const ReferralsPage = () => {
         {showModal && selectedReferrer && (
           <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>
             <div className={styles.modal} onClick={e => e.stopPropagation()}>
-              <h2>Usuarios Referidos por {selectedReferrer.firstName} {selectedReferrer.lastName}</h2>
+              <h2>Clientes Referidos por {selectedReferrer.firstName} {selectedReferrer.lastName}</h2>
               <div className={styles.referredUsersList}>
                 {modalLoading ? (
                   <div className={styles.loading}>
-                    Cargando usuarios referidos...
+                    Cargando clientes referidos...
                   </div>
                 ) : referredUsers.length === 0 ? (
                   <div className={styles.emptyState}>
-                    No se encontraron usuarios referidos para este usuario
+                    No se encontraron clientes referidos para este cliente
                   </div>
                 ) : (
                   referredUsers.map((user) => (

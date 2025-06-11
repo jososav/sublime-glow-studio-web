@@ -27,7 +27,7 @@ export const useCouponsList = () => {
       for (const docSnapshot of querySnapshot.docs) {
         const couponData = docSnapshot.data();
         
-        // Si el cupón está asignado a un usuario, obtener sus datos
+        // Si el cupón está asignado a un cliente, obtener sus datos
         let userData = null;
         if (couponData.userId) {
           const userDoc = await getDoc(doc(db, "users", couponData.userId));

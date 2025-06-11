@@ -46,7 +46,7 @@ const appointmentReminderTemplate = (appointment, userData) => {
   return {
     subject: `Recordatorio: Tu cita es mañana - ${formatDate(appointment.date)}`,
     text: `
-¡Hola ${userData?.name || 'Usuario'}!
+¡Hola ${userData?.name || 'Cliente'}!
 
 Este es un recordatorio de tu cita mañana en Sublime Glow Studio.
 
@@ -117,7 +117,7 @@ El equipo de Sublime Glow Studio
   </div>
 
   <div class="content">
-    <p>¡Hola ${userData?.name || 'Usuario'}!</p>
+    <p>¡Hola ${userData?.name || 'Cliente'}!</p>
     <p>Este es un recordatorio de tu cita mañana en Sublime Glow Studio.</p>
   </div>
 

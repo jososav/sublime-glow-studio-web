@@ -47,14 +47,14 @@ export const ReferralSection = ({ userId }) => {
       </div>
 
       <div className={styles.referralsList}>
-        <h3>Usuarios Referidos</h3>
+        <h3>Clientes Referidos</h3>
         
         {loading ? (
           <p className={styles.loading}>Cargando referidos...</p>
         ) : error ? (
           <p className={styles.error}>{error}</p>
         ) : referrals.length === 0 ? (
-          <p className={styles.empty}>Aún no has referido a ningún usuario</p>
+          <p className={styles.empty}>Aún no has referido a ningún cliente</p>
         ) : (
           <div className={styles.list}>
             {referrals.map((referral) => (

@@ -23,7 +23,7 @@ export const appointmentCreatedTemplate = (appointment, userData) => {
   return {
     subject: `Cita creada en Sublime Glow Studio - ${formatDate(appointment.date)}`,
     text: `
-¡Hola ${userData?.name || 'Usuario'}!
+¡Hola ${userData?.name || 'Cliente'}!
 
 Tu cita ha sido creada exitosamente en Sublime Glow Studio.
 
@@ -104,7 +104,7 @@ El equipo de Sublime Glow Studio
   </div>
 
   <div class="content">
-    <p>¡Hola ${userData?.name || 'Usuario'}!</p>
+    <p>¡Hola ${userData?.name || 'Cliente'}!</p>
     <p>Tu cita ha sido creada exitosamente en Sublime Glow Studio.</p>
   </div>
 
@@ -272,7 +272,7 @@ export const appointmentConfirmedTemplate = (appointment, userData) => {
   return {
     subject: `¡Tu cita ha sido confirmada! - ${formatDate(appointment.date)}`,
     text: `
-¡Hola ${userData?.name || 'Usuario'}!
+¡Hola ${userData?.name || 'Cliente'}!
 
 Tu cita ha sido confirmada en Sublime Glow Studio.
 
@@ -351,7 +351,7 @@ El equipo de Sublime Glow Studio
   </div>
 
   <div class="content">
-    <p>¡Hola ${userData?.name || 'Usuario'}!</p>
+    <p>¡Hola ${userData?.name || 'Cliente'}!</p>
     <p>Tu cita ha sido confirmada en Sublime Glow Studio.</p>
   </div>
 
@@ -405,7 +405,7 @@ export const appointmentCancelledTemplate = (appointment, userData) => {
   return {
     subject: `Tu cita ha sido cancelada - ${formatDate(appointment.date)}`,
     text: `
-¡Hola ${userData?.name || 'Usuario'}!
+¡Hola ${userData?.name || 'Cliente'}!
 
 Tu cita ha sido cancelada en Sublime Glow Studio.
 
@@ -484,7 +484,7 @@ El equipo de Sublime Glow Studio
   </div>
 
   <div class="content">
-    <p>¡Hola ${userData?.name || 'Usuario'}!</p>
+    <p>¡Hola ${userData?.name || 'Cliente'}!</p>
     <p>Tu cita ha sido cancelada en Sublime Glow Studio.</p>
   </div>
 
@@ -540,10 +540,10 @@ export const appointmentCancelledAdminTemplate = (appointment, userData) => {
     text: `
 ¡Hola Admin!
 
-Un usuario ha cancelado su cita en Sublime Glow Studio.
+Un cliente ha cancelado su cita en Sublime Glow Studio.
 
 Detalles de la cita cancelada:
-👤 Cliente: ${userData?.name || 'Usuario no especificado'}
+👤 Cliente: ${userData?.name || 'Cliente no especificado'}
 📧 Email: ${appointment.email || 'No especificado'}
 📱 Teléfono: ${userData?.phone || 'No especificado'}
 📅 Fecha: ${formatDate(appointment.date)}
@@ -619,12 +619,12 @@ Sistema de Notificaciones
 
   <div class="content">
     <p>¡Hola Admin!</p>
-    <p>Un usuario ha cancelado su cita en Sublime Glow Studio.</p>
+    <p>Un cliente ha cancelado su cita en Sublime Glow Studio.</p>
   </div>
 
   <div class="details">
     <h2>Detalles de la cita cancelada:</h2>
-    <div class="detail-item">👤 <strong>Cliente:</strong> ${userData?.name || 'Usuario no especificado'}</div>
+    <div class="detail-item">👤 <strong>Cliente:</strong> ${userData?.name || 'Cliente no especificado'}</div>
     <div class="detail-item">📧 <strong>Email:</strong> ${appointment.email || 'No especificado'}</div>
     <div class="detail-item">📱 <strong>Teléfono:</strong> ${userData?.phone || 'No especificado'}</div>
     <div class="detail-item">📅 <strong>Fecha:</strong> ${formatDate(appointment.date)}</div>

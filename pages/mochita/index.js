@@ -26,8 +26,8 @@ const MochitaAdmin = () => {
       path: "/mochita/appointments"
     },
     {
-      title: "Gestión de Usuarios",
-      description: "Administra los usuarios y sus permisos",
+      title: "Gestión de Clientes",
+      description: "Administra los clientes y sus permisos",
       icon: "👥",
       path: "/mochita/users"
     },

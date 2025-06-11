@@ -34,7 +34,7 @@ const ReferralPage = () => {
         if (userDoc.exists()) {
           setReferrer(userDoc.data());
         } else {
-          setError("Usuario referente no encontrado");
+          setError("Cliente referente no encontrado");
         }
       } catch (error) {
         console.error("Error fetching referrer:", error);
@@ -177,7 +177,7 @@ const ReferralPage = () => {
         await setDoc(doc(db, "users", userCredential.user.uid), newUser);
       } catch (userDocError) {
         console.error("Error creating user document:", userDocError);
-        setError("Error al guardar los datos del usuario");
+        setError("Error al guardar los datos del cliente");
         return;
       }
 

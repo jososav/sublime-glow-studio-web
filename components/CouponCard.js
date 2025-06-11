@@ -194,11 +194,11 @@ export const CouponCard = ({ coupon, onUpdate }) => {
       </div>
 
       <div className={styles.assignmentsInfo}>
-        <h4>Usuarios Asignados:</h4>
+        <h4>Clientes Asignados:</h4>
         {loadingAssignments ? (
           <p>Cargando asignaciones...</p>
         ) : Object.keys(assignmentsByUser).length === 0 ? (
-          <p>No hay usuarios asignados</p>
+          <p>No hay clientes asignados</p>
         ) : (
           <div className={styles.assignmentsList}>
             {Object.entries(assignmentsByUser).map(([userId, userAssignments]) => {
@@ -248,7 +248,7 @@ export const CouponCard = ({ coupon, onUpdate }) => {
           </div>
 
           <div className={styles.userAssignment}>
-            <h4>Asignar Cupón a Usuarios:</h4>
+            <h4>Asignar Cupón a Clientes:</h4>
             <div className={styles.usersList}>
               {users.map(user => (
                 <div 
@@ -289,7 +289,7 @@ export const CouponCard = ({ coupon, onUpdate }) => {
                 }}
                 disabled={updating}
               >
-                {updating ? "Asignando..." : `Asignar a ${selectedUsers.length} usuarios`}
+                {updating ? "Asignando..." : `Asignar a ${selectedUsers.length} clientes`}
               </button>
             )}
           </div>
