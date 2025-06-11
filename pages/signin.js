@@ -7,6 +7,7 @@ import styles from "../styles/Signin.module.css";
 import { useAuthentication } from "../providers/Authentication/authentication";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { event, setUserId, setUserProperties } from "../config/analytics";
 
 const AuthPage = () => {
   const router = useRouter();
@@ -16,6 +17,16 @@ const AuthPage = () => {
   
   useEffect(() => {
     if (user?.uid && router.isReady) {
+      // Set user ID for GA4
+      setUserId(user.uid);
+      
+      // Set user properties
+      setUserProperties({
+        user_type: 'authenticated',
+        signup_method: 'email',
+        has_profile: !!user.displayName,
+      });
+
       const redirectPath = router.query.redirect || "/";
       router.replace(redirectPath);
     }
@@ -40,9 +51,31 @@ const AuthPage = () => {
     setError("");
     
     try {
-      await signInWithEmailAndPassword(auth, form.email, form.password);
-      // Redirect will happen automatically due to auth state change
+      const userCredential = await signInWithEmailAndPassword(auth, form.email, form.password);
+      
+      // Track successful login
+      event({
+        action: 'login',
+        category: 'Authentication',
+        label: 'Email',
+        value: 1
+      });
+
+      // Set user properties after successful login
+      setUserProperties({
+        last_login: new Date().toISOString(),
+        login_method: 'email',
+      });
+
     } catch (error) {
+      // Track failed login attempt
+      event({
+        action: 'login_error',
+        category: 'Authentication',
+        label: error.code,
+        value: 1
+      });
+
       if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
         setError("Correo electrónico o contraseña incorrectos");
       } else if (error.code === 'auth/too-many-requests') {
@@ -86,8 +119,31 @@ const AuthPage = () => {
         createdAt: serverTimestamp(),
       });
 
-      // Redirect will happen automatically due to auth state change
+      // Track successful signup
+      event({
+        action: 'sign_up',
+        category: 'Authentication',
+        label: 'Email',
+        value: 1
+      });
+
+      // Set user properties after successful signup
+      setUserProperties({
+        signup_date: new Date().toISOString(),
+        signup_method: 'email',
+        has_phone: !!phone,
+        has_birthday: !!birthday,
+      });
+
     } catch (error) {
+      // Track failed signup attempt
+      event({
+        action: 'signup_error',
+        category: 'Authentication',
+        label: error.code,
+        value: 1
+      });
+
       if (error.code === 'auth/email-already-in-use') {
         setError("Este correo electrónico ya está registrado");
       } else {
