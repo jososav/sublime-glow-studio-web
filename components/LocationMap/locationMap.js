@@ -13,7 +13,7 @@ export default function LocationMap() {
         </p>
         <div className={styles.mapContainer}>
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d981.8706935843595!2d-84.66723665659901!3d9.994138799999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOcKwNTknMzguOSJOIDg0wrA0MCcwMS42Ilc!5e0!3m2!1sen!2scr!4v1710633486447!5m2!1sen!2scr"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d981.8706935843595!2d-84.6670026!3d9.9941359!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa037f75aeedd5b%3A0xd456fb8b20300e3a!2sSublime%20Glow%20Studio!5e0!3m2!1sen!2scr!4v1710633486447!5m2!1sen!2scr"
             width="100%"
             height="450"
             style={{ border: 0 }}
