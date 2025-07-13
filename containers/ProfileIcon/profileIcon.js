@@ -10,6 +10,7 @@ import { useAuthentication } from "../../providers/Authentication/authentication
 export default function ProfileIcon() {
   const { user, userData, loading } = useAuthentication();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const dropdownRef = useRef(null);
   const avatarRef = useRef(null);
 
@@ -43,7 +44,19 @@ export default function ProfileIcon() {
     return () => window.removeEventListener('popstate', handleRouteChange);
   }, []);
 
-  if (loading) {
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      setShowDropdown(false);
+      await logout();
+    } catch (error) {
+      console.error('Error during logout:', error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  if (loading || isLoggingOut) {
     return (
       <div className={styles.wrapper}>
         <FiUser size={20} />
@@ -73,11 +86,9 @@ export default function ProfileIcon() {
             <span>Mi Perfil</span>
           </Link>
           <button 
-            onClick={() => {
-              setShowDropdown(false);
-              logout();
-            }} 
+            onClick={handleLogout}
             className={styles.dropdownItem}
+            disabled={isLoggingOut}
           >
             <FiLogOut size={18} />
             <span>Cerrar Sesión</span>

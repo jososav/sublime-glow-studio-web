@@ -8,6 +8,7 @@ import { useAuthentication } from "../providers/Authentication/authentication";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { event, setUserId, setUserProperties } from "../config/analytics";
+import { track, events, trackError } from "../config/mixpanel";
 
 const AuthPage = () => {
   const router = useRouter();
@@ -53,12 +54,18 @@ const AuthPage = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, form.email, form.password);
       
-      // Track successful login
+      // Track successful login in GA4
       event({
         action: 'login',
         category: 'Authentication',
         label: 'Email',
         value: 1
+      });
+
+      // Track successful login in Mixpanel
+      track(events.LOGIN, {
+        method: 'email',
+        email: form.email
       });
 
       // Set user properties after successful login
@@ -68,12 +75,18 @@ const AuthPage = () => {
       });
 
     } catch (error) {
-      // Track failed login attempt
+      // Track failed login attempt in GA4
       event({
         action: 'login_error',
         category: 'Authentication',
         label: error.code,
         value: 1
+      });
+
+      // Track error in Mixpanel
+      trackError(error, {
+        context: 'Login',
+        email: form.email
       });
 
       if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
@@ -119,12 +132,20 @@ const AuthPage = () => {
         createdAt: serverTimestamp(),
       });
 
-      // Track successful signup
+      // Track successful signup in GA4
       event({
         action: 'sign_up',
         category: 'Authentication',
         label: 'Email',
         value: 1
+      });
+
+      // Track successful signup in Mixpanel
+      track(events.SIGNUP, {
+        method: 'email',
+        email,
+        has_phone: !!phone,
+        has_birthday: !!birthday
       });
 
       // Set user properties after successful signup
@@ -136,12 +157,18 @@ const AuthPage = () => {
       });
 
     } catch (error) {
-      // Track failed signup attempt
+      // Track failed signup attempt in GA4
       event({
         action: 'signup_error',
         category: 'Authentication',
         label: error.code,
         value: 1
+      });
+
+      // Track error in Mixpanel
+      trackError(error, {
+        context: 'Signup',
+        email: form.email
       });
 
       if (error.code === 'auth/email-already-in-use') {

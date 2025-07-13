@@ -12,6 +12,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import ServiceSelection from "../components/ServiceSelection/serviceSelection";
 import styles from "../styles/Appointments.module.css";
+import { track, events } from "../config/mixpanel";
 
 const Appointments = () => {
   const router = useRouter();
@@ -82,6 +83,19 @@ const Appointments = () => {
               appointmentId: result.appointmentId
             });
           }
+
+          // Track successful appointment creation
+          await track(events.APPOINTMENT_CREATED, {
+            service_id: selectedService.id,
+            service_name: selectedService.name,
+            service_duration: selectedService.durationMinutes,
+            appointment_date: selectedDate.toISOString(),
+            appointment_time: selectedSlot,
+            has_coupon: !!selectedCoupon,
+            coupon_discount: selectedCoupon?.discountPercentage,
+            appointment_id: result.appointmentId
+          });
+
           resetScheduling();
           setSelectedCoupon(null);
           router.push('/profile/appointments');

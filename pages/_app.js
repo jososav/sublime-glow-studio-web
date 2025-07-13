@@ -8,17 +8,30 @@ import Header from "../components/Header/header";
 import Footer from "../components/Footer/footer";
 import { Toaster } from "react-hot-toast";
 import { pageview } from '../config/analytics';
+import { trackPageView } from '../config/mixpanel';
 
 export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
     // Track page views when route changes
-    const handleRouteChange = (url) => {
+    const handleRouteChange = async (url) => {
+      // Track in GA4
       pageview(url);
+      // Track in Mixpanel
+      try {
+        await trackPageView(url);
+      } catch (error) {
+        console.error('Failed to track page view:', error);
+      }
     };
 
+    // Track initial page view
+    handleRouteChange(window.location.pathname);
+
+    // Track subsequent route changes
     router.events.on('routeChangeComplete', handleRouteChange);
+
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange);
     };

@@ -7,6 +7,7 @@ import styles from "../../styles/Referral.module.css";
 import { useAuthentication } from "../../providers/Authentication/authentication";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
+import { track } from "../../config/mixpanel";
 
 const ReferralPage = () => {
   const router = useRouter();
@@ -51,11 +52,27 @@ const ReferralPage = () => {
     const referralLink = `${window.location.origin}/referidos/${userId}`;
     try {
       await navigator.clipboard.writeText(referralLink);
+      // Track the copy event
+      await track('Referral Link Copied', {
+        referral_link: referralLink,
+        share_method: 'copy',
+        user_id: userId
+      });
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Error copying to clipboard:', err);
     }
+  };
+
+  const handleWhatsAppShare = async () => {
+    const referralLink = `${window.location.origin}/referidos/${userId}`;
+    // Track the WhatsApp share event before opening WhatsApp
+    await track('Referral Link Shared', {
+      referral_link: referralLink,
+      share_method: 'whatsapp',
+      user_id: userId
+    });
   };
 
   // If user is already logged in, show them a message
@@ -85,6 +102,7 @@ const ReferralPage = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.whatsappButton}
+                  onClick={handleWhatsAppShare}
                 >
                   Compartir por WhatsApp
                 </a>

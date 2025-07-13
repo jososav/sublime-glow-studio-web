@@ -8,6 +8,7 @@ import {
   browserLocalPersistence
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { track, events, identifyUser } from './mixpanel';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDcliMSmoGDrjyaWPRCHxO_nuaGEgL69pg",
@@ -44,6 +45,11 @@ export const signInWithGoogle = async () => {
 // Function to sign out
 export const logout = async () => {
   try {
+    // Track the logout event before signing out
+    await track(events.LOGOUT);
+    // Reset Mixpanel identity
+    await identifyUser(null);
+    // Sign out from Firebase
     await signOut(auth);
   } catch (error) {
     console.error("Error signing out:", error);
