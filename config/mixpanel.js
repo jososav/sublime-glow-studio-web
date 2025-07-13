@@ -17,13 +17,6 @@ const initMixpanel = () => {
         ignore_dnt: true, // You might want to respect Do Not Track in production
         loaded: () => {
           console.log('Mixpanel loaded callback triggered');
-          // Set initial anonymous ID if needed
-          const distinctId = mixpanel.get_distinct_id();
-          if (!distinctId || distinctId === '') {
-            const anonymousId = getAnonymousId();
-            console.log('Setting initial anonymous ID:', anonymousId);
-            mixpanel.identify(anonymousId);
-          }
           isInitialized = true;
           resolve();
         }
@@ -43,21 +36,21 @@ if (typeof window !== 'undefined') {
   });
 }
 
-// Generate a unique anonymous ID
-const generateAnonymousId = () => {
-  return 'anon_' + Math.random().toString(36).substr(2, 9);
+// Generate a device ID
+const generateDeviceId = () => {
+  return 'device_' + Math.random().toString(36).substr(2, 9);
 };
 
-// Get or create anonymous ID
-const getAnonymousId = () => {
+// Get or create device ID
+const getDeviceId = () => {
   if (typeof window === 'undefined') return null;
   
-  let anonymousId = localStorage.getItem('mp_anonymous_id');
-  if (!anonymousId) {
-    anonymousId = generateAnonymousId();
-    localStorage.setItem('mp_anonymous_id', anonymousId);
+  let deviceId = localStorage.getItem('mp_device_id');
+  if (!deviceId) {
+    deviceId = generateDeviceId();
+    localStorage.setItem('mp_device_id', deviceId);
   }
-  return anonymousId;
+  return deviceId;
 };
 
 // Check if Mixpanel is ready
@@ -86,13 +79,20 @@ const safeTrack = async (eventName, properties = {}) => {
     // Double check we have a distinct_id
     const distinctId = mixpanel.get_distinct_id();
     if (!distinctId || distinctId === '') {
-      const anonymousId = getAnonymousId();
-      console.log('Re-setting anonymous ID:', anonymousId);
-      mixpanel.identify(anonymousId);
+      const deviceId = getDeviceId();
+      console.log('Setting device ID:', deviceId);
+      mixpanel.identify(deviceId);
     }
     
+    // Add device ID to all events
+    const deviceId = getDeviceId();
+    const enhancedProperties = {
+      ...properties,
+      device_id: deviceId
+    };
+    
     console.log('Tracking event:', eventName, 'with distinct_id:', mixpanel.get_distinct_id());
-    mixpanel.track(eventName, properties);
+    mixpanel.track(eventName, enhancedProperties);
     return true;
   } catch (error) {
     console.error('Failed to track event:', eventName, error);
@@ -125,13 +125,10 @@ export const identifyUser = async (user) => {
       const currentId = mixpanel.get_distinct_id();
       console.log('Current distinct_id:', currentId);
       
-      // Only alias if we're transitioning from anonymous to identified
-      if (currentId && currentId.startsWith('anon_')) {
-        console.log('Aliasing anonymous user to:', user.uid);
-        // First alias the anonymous ID to the user ID
+      // Only alias if we're transitioning from device ID to identified
+      if (currentId && currentId.startsWith('device_')) {
+        console.log('Aliasing device user to:', user.uid);
         mixpanel.alias(user.uid);
-        // Then clear the anonymous ID
-        localStorage.removeItem('mp_anonymous_id');
       }
       
       // Now identify the user
@@ -145,15 +142,15 @@ export const identifyUser = async (user) => {
         $created: user.metadata.creationTime,
         last_login: user.metadata.lastSignInTime,
         provider: user.providerData[0]?.providerId || 'unknown',
-        user_id: user.uid
+        user_id: user.uid,
+        device_id: getDeviceId() // Include device ID in user properties
       });
     } else {
-      // Reset identity for logged out users
-      const anonymousId = getAnonymousId();
-      console.log('Resetting to anonymous user:', anonymousId);
-      localStorage.setItem('mp_anonymous_id', anonymousId);
+      // Reset to device ID for logged out users
+      const deviceId = getDeviceId();
+      console.log('Resetting to device ID:', deviceId);
       mixpanel.reset();
-      mixpanel.identify(anonymousId);
+      mixpanel.identify(deviceId);
     }
   } catch (error) {
     console.error('Error identifying user:', error);
