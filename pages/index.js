@@ -100,8 +100,7 @@ export default function Home() {
             </h2>
             <p className={styles.description}>
               Las uñas se moldean, las cutículas se cuidan y realizamos una
-              preparación completa para obtener los mejores resultados. Puedes
-              elegir entre esmalte tradicional o gel (semipermanente).
+              preparación completa para obtener los mejores resultados.
             </p>
             <div className={styles.ctaContainer}>
               <Link href="/appointments" className={styles.ctaLink}>
