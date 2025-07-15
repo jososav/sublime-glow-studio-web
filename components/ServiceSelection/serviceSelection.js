@@ -19,7 +19,7 @@ const ServiceCard = ({ service, isSelected, onClick }) => (
 const ServiceSelection = ({ services, selectedService, onServiceSelect }) => {
   return (
     <div className={styles.formGroup}>
-      <label>Servicio:</label>
+      <label>Seleccionar servicio deseado:</label>
       <div className={styles.servicesGrid}>
         {services.map((service) => (
           <ServiceCard
