@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth, db } from "../config/firebase";
 import styles from "../styles/Signin.module.css";
 import { useAuthentication } from "../providers/Authentication/authentication";
@@ -15,6 +15,9 @@ const AuthPage = () => {
   const { user } = useAuthentication();
   const [activeTab, setActiveTab] = useState("login");
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
+  const [showResetForm, setShowResetForm] = useState(false);
   
   useEffect(() => {
     if (user?.uid && router.isReady) {
@@ -45,6 +48,58 @@ const AuthPage = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError(""); // Clear error when user types
+    setSuccessMessage(""); // Clear success message when user types
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccessMessage("");
+    
+    try {
+      // Set language to Spanish before sending the reset email
+      auth.languageCode = 'es';
+      await sendPasswordResetEmail(auth, resetEmail);
+      
+      // Track password reset request in GA4
+      event({
+        action: 'password_reset_request',
+        category: 'Authentication',
+        label: 'Email',
+        value: 1
+      });
+
+      // Track in Mixpanel
+      track(events.PASSWORD_RESET_REQUEST, {
+        email: resetEmail
+      });
+
+      setSuccessMessage("Se ha enviado un correo electrónico para restablecer tu contraseña");
+      setShowResetForm(false);
+      setResetEmail("");
+    } catch (error) {
+      // Track error in GA4
+      event({
+        action: 'password_reset_error',
+        category: 'Authentication',
+        label: error.code,
+        value: 1
+      });
+
+      // Track error in Mixpanel
+      trackError(error, {
+        context: 'Password Reset',
+        email: resetEmail
+      });
+
+      if (error.code === 'auth/user-not-found') {
+        setError("No existe una cuenta con este correo electrónico");
+      } else if (error.code === 'auth/invalid-email') {
+        setError("Correo electrónico inválido");
+      } else {
+        setError("Error al enviar el correo de recuperación. Por favor, intenta de nuevo");
+      }
+    }
   };
 
   const handleLogin = async (e) => {
@@ -188,6 +243,8 @@ const AuthPage = () => {
             onClick={() => {
               setActiveTab("login");
               setError("");
+              setSuccessMessage("");
+              setShowResetForm(false);
             }}
           >
             Iniciar Sesión
@@ -197,6 +254,8 @@ const AuthPage = () => {
             onClick={() => {
               setActiveTab("signup");
               setError("");
+              setSuccessMessage("");
+              setShowResetForm(false);
             }}
           >
             Crear Cuenta
@@ -204,8 +263,9 @@ const AuthPage = () => {
         </div>
 
         {error && <div className={styles.error}>{error}</div>}
+        {successMessage && <div className={styles.success}>{successMessage}</div>}
 
-        {activeTab === "login" ? (
+        {activeTab === "login" && !showResetForm ? (
           <form className={styles.form} onSubmit={handleLogin}>
             <div className={styles.formGroup}>
               <input
@@ -229,6 +289,47 @@ const AuthPage = () => {
             </div>
             <button className={styles.confirm} type="submit">
               Iniciar Sesión
+            </button>
+            <button
+              type="button"
+              className={styles.forgotPassword}
+              onClick={() => {
+                setShowResetForm(true);
+                setError("");
+                setSuccessMessage("");
+              }}
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+          </form>
+        ) : activeTab === "login" && showResetForm ? (
+          <form className={styles.form} onSubmit={handleResetPassword}>
+            <div className={styles.formGroup}>
+              <input
+                type="email"
+                placeholder="Correo electrónico"
+                value={resetEmail}
+                onChange={(e) => {
+                  setResetEmail(e.target.value);
+                  setError("");
+                  setSuccessMessage("");
+                }}
+                required
+              />
+            </div>
+            <button className={styles.confirm} type="submit">
+              Enviar correo de recuperación
+            </button>
+            <button
+              type="button"
+              className={styles.forgotPassword}
+              onClick={() => {
+                setShowResetForm(false);
+                setError("");
+                setSuccessMessage("");
+              }}
+            >
+              Volver al inicio de sesión
             </button>
           </form>
         ) : (

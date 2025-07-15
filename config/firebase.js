@@ -24,6 +24,9 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 
+// Set Spanish as the default language for authentication operations
+auth.languageCode = 'es';
+
 // Set persistence to LOCAL
 setPersistence(auth, browserLocalPersistence).catch((error) => {
   console.error("Error setting auth persistence:", error);

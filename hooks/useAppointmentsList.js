@@ -307,22 +307,27 @@ export const useAppointmentsList = (userId) => {
 
       // Send email notification with admin privileges
       if (appointmentData.email && userData) {
-        const emailData = newStatus === "confirmed" 
-          ? appointmentConfirmedTemplate(appointmentData, userData)
-          : appointmentCancelledTemplate(appointmentData, userData);
+        let emailData;
+        if (newStatus === "confirmed") {
+          emailData = appointmentConfirmedTemplate(appointmentData, userData);
+        } else if (newStatus === "cancelled") {
+          emailData = appointmentCancelledTemplate(appointmentData, userData);
+        }
 
-        try {
-          await sendEmail(
-            appointmentData.email,
-            emailData.subject,
-            emailData.text,
-            emailData.html,
-            'admin' // Pass 'admin' as the token to indicate admin privileges
-          );
-        } catch (error) {
-          console.error('Error sending email:', error);
-          // Don't throw the error, just log it and continue
-          // This way the status change succeeds even if email fails
+        if (emailData) {
+          try {
+            await sendEmail(
+              appointmentData.email,
+              emailData.subject,
+              emailData.text,
+              emailData.html,
+              'admin' // Pass 'admin' as the token to indicate admin privileges
+            );
+          } catch (error) {
+            console.error('Error sending email:', error);
+            // Don't throw the error, just log it and continue
+            // This way the status change succeeds even if email fails
+          }
         }
       }
 

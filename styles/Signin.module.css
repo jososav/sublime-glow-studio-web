@@ -115,6 +115,33 @@
   text-align: center;
 }
 
+.success {
+  background: var(--cotton-candy-light);
+  color: var(--cotton-candy-dark);
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.forgotPassword {
+  width: 100%;
+  background: transparent;
+  color: var(--cotton-candy);
+  padding: 0.5rem;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 1rem;
+  text-decoration: underline;
+}
+
+.forgotPassword:hover {
+  color: var(--cotton-candy-dark);
+}
+
 /* DatePicker specific styles */
 .datePickerWrapper {
   width: 100%;
