@@ -1,13 +1,15 @@
 import Image from "next/image";
 
 const _getInitials = (name) => {
-  if (!name) return "??";
+  if (!name || typeof name !== 'string') return "??";
 
-  const parts = name.split(" ");
+  const parts = name.trim().split(" ").filter(part => part.length > 0);
+
+  if (parts.length === 0) return "??";
 
   return parts.length > 1
-    ? parts[0][0].toUpperCase() + parts[1][0].toUpperCase()
-    : parts[0][0].toUpperCase();
+    ? (parts[0][0] || "?").toUpperCase() + (parts[1][0] || "?").toUpperCase()
+    : (parts[0][0] || "?").toUpperCase() + (parts[0][1] || "").toUpperCase();
 };
 
 const Avatar = ({ user }) => {
@@ -43,7 +45,7 @@ const Avatar = ({ user }) => {
 
   const displayName = user.firstName && user.lastName 
     ? `${user.firstName} ${user.lastName}`
-    : user.email;
+    : user.email || "Usuario";
 
   return (
     <div className="avatar">
