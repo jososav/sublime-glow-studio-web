@@ -9,6 +9,7 @@ import Footer from "../components/Footer/footer";
 import { Toaster } from "react-hot-toast";
 import { pageview } from '../config/analytics';
 import { trackPageView } from '../config/mixpanel';
+import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 
 export default function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -38,15 +39,17 @@ export default function MyApp({ Component, pageProps }) {
   }, [router.events]);
 
   return (
-    <AuthenticationProvider>
-      <div className="app-container">
-        <Header />
-        <main className="main-content">
-          <Component {...pageProps} />
-        </main>
-        <Footer />
-      </div>
-      <Toaster position="top-right" />
-    </AuthenticationProvider>
+    <ErrorBoundary>
+      <AuthenticationProvider>
+        <div className="app-container">
+          <Header />
+          <main className="main-content">
+            <Component {...pageProps} />
+          </main>
+          <Footer />
+        </div>
+        <Toaster position="top-right" />
+      </AuthenticationProvider>
+    </ErrorBoundary>
   );
 }
