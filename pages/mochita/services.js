@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { AdminProtected } from "../../components/AdminProtected";
 import { collection, doc, getDoc, setDoc, deleteDoc, getDocs } from 'firebase/firestore';
 import { db } from '../../config/firebase';
+import { formatDuration } from '../../helpers/time';
 import styles from "../../styles/Services.module.css";
 
 const ServiceModal = ({ isOpen, onClose, service, onSave }) => {
@@ -188,7 +189,7 @@ const Services = () => {
               <div key={service.id} className={styles.serviceCard}>
                 <div className={styles.serviceInfo}>
                   <h3>{service.name}</h3>
-                  <p>Duración: {service.durationMinutes} minutos</p>
+                  <p>Duración: {formatDuration(service.durationMinutes)}</p>
                 </div>
                 <div className={styles.serviceActions}>
                   <button
