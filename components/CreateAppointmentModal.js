@@ -10,8 +10,7 @@ import { useUsers } from "../hooks/useUsers";
 import { useAppointmentScheduling } from "../hooks/useAppointmentScheduling";
 import { useUserCoupons } from "../hooks/useUserCoupons";
 import { toAmPm } from "../helpers/time";
-import { track } from "../lib/mixpanel";
-import { events } from "../lib/mixpanelEvents";
+import { track, events } from "../config/mixpanel";
 
 const ServiceCard = ({ service, isSelected, onClick }) => (
   <div 
