@@ -21,6 +21,7 @@ import {
 } from "../helpers/emailTemplates";
 import { sendEmail } from "../helpers/sendEmail";
 import { toast } from "react-hot-toast";
+import { track, events } from "../config/mixpanel";
 
 const APPOINTMENTS_PER_PAGE = 10;
 
@@ -302,7 +303,27 @@ export const useAppointmentsList = (userId) => {
       // Update appointment status
       await updateDoc(appointmentRef, {
         status: newStatus,
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
+        updatedBy: "admin"
+      });
+
+      // Track appointment status change in Mixpanel
+      await track("Appointment Status Changed", {
+        appointment_id: appointmentId,
+        service_id: appointmentData.serviceId,
+        service_name: appointmentData.serviceData?.name,
+        original_date: appointmentData.date,
+        original_time: appointmentData.startTime,
+        previous_status: appointmentData.status,
+        new_status: newStatus,
+        changed_by: "admin",
+        had_coupon: !!appointmentData.couponId,
+        coupon_id: appointmentData.couponId || null,
+        discount_percentage: appointmentData.discountPercentage || 0,
+        user_id: userId,
+        user_name: userData ? `${userData.firstName} ${userData.lastName}` : null,
+        user_email: userData?.email || null,
+        is_first_finalized: newStatus === "finalized" && previousAppointments?.size === 0
       });
 
       // Send email notification with admin privileges
@@ -370,6 +391,19 @@ export const useAppointmentsList = (userId) => {
         status: "cancelled",
         cancelledAt: new Date().toISOString(),
         cancelledBy: "user"
+      });
+
+      // Track appointment cancellation in Mixpanel
+      await track(events.APPOINTMENT_CANCELLED, {
+        appointment_id: appointmentId,
+        service_id: appointmentData.serviceId,
+        service_name: appointmentData.serviceData?.name,
+        original_date: appointmentData.date,
+        original_time: appointmentData.startTime,
+        cancelled_by: "user",
+        had_coupon: !!appointmentData.couponId,
+        coupon_id: appointmentData.couponId || null,
+        discount_percentage: appointmentData.discountPercentage || 0
       });
 
       // Send cancellation email to user
