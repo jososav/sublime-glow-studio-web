@@ -1,17 +1,11 @@
-import { useEffect, useState } from 'react';
-import { fetchServices } from '../../data/services/services';
-import { formatDuration } from '../../helpers/time';
-import styles from './servicesSection.module.css';
+import { useEffect, useState } from "react";
+import { fetchServices } from "../../data/services/services";
+import { formatDuration } from "../../helpers/time";
+import styles from "./servicesSection.module.css";
 
 const ServiceCard = ({ service }) => (
   <div className={styles.serviceCard}>
     <h3>{service.name}</h3>
-    <div className={styles.serviceDetails}>
-      <span>⏱️ Duración: {formatDuration(service.durationMinutes)}</span>
-    </div>
-    {service.description && (
-      <p className={styles.serviceDescription}>{service.description}</p>
-    )}
   </div>
 );
 
@@ -25,7 +19,7 @@ const ServicesSection = () => {
         const servicesData = await fetchServices();
         setServices(servicesData);
       } catch (error) {
-        console.error('Error loading services:', error);
+        console.error("Error loading services:", error);
       } finally {
         setLoading(false);
       }
@@ -43,7 +37,8 @@ const ServicesSection = () => {
       <div className={styles.container}>
         <h2>Nuestros Servicios</h2>
         <p className={styles.sectionDescription}>
-          Descubre nuestra variedad de servicios diseñados para realzar tu belleza natural
+          Descubre nuestra variedad de servicios diseñados para realzar tu
+          belleza natural
         </p>
         <div className={styles.servicesGrid}>
           {services.map((service) => (
@@ -55,4 +50,4 @@ const ServicesSection = () => {
   );
 };
 
-export default ServicesSection; 
+export default ServicesSection;

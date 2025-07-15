@@ -1,5 +1,4 @@
 import styles from './serviceSelection.module.css';
-import { formatDuration } from '../../helpers/time';
 
 const ServiceCard = ({ service, isSelected, onClick }) => (
   <div 
@@ -7,12 +6,6 @@ const ServiceCard = ({ service, isSelected, onClick }) => (
     onClick={onClick}
   >
     <h3>{service.name}</h3>
-    <div className={styles.serviceDetails}>
-      <span>⏱️ Duración: {formatDuration(service.durationMinutes)}</span>
-    </div>
-    {service.description && (
-      <p className={styles.serviceDescription}>{service.description}</p>
-    )}
   </div>
 );
 

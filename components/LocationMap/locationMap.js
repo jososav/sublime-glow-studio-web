@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import styles from './LocationMap.module.css';
 
 export default function LocationMap() {
@@ -31,6 +32,26 @@ export default function LocationMap() {
             <h3>Horario</h3>
             <p>Lunes a Sábado: 8:00 AM - 6:00 PM</p>
             <p>Domingo: Cerrado</p>
+          </div>
+          <div className={styles.infoItem}>
+            <h3>WhatsApp</h3>
+            <p>
+              <a 
+                href="https://wa.me/50663580568" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className={styles.whatsappLink}
+              >
+                <Image
+                  src="/whatsapp-icon.svg"
+                  alt="WhatsApp"
+                  width={24}
+                  height={24}
+                  className={styles.whatsappIcon}
+                />
+                <span>6358-0568</span>
+              </a>
+            </p>
           </div>
         </div>
       </div>
