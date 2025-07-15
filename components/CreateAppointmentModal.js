@@ -10,6 +10,8 @@ import { useUsers } from "../hooks/useUsers";
 import { useAppointmentScheduling } from "../hooks/useAppointmentScheduling";
 import { useUserCoupons } from "../hooks/useUserCoupons";
 import { toAmPm } from "../helpers/time";
+import { track } from "../lib/mixpanel";
+import { events } from "../lib/mixpanelEvents";
 
 const ServiceCard = ({ service, isSelected, onClick }) => (
   <div 
@@ -19,6 +21,7 @@ const ServiceCard = ({ service, isSelected, onClick }) => (
     <h3>{service.name}</h3>
     <div className={styles.serviceDetails}>
       <span>⏱️ Duración: {Math.floor(service.durationMinutes / 60)}:{(service.durationMinutes % 60).toString().padStart(2, '0')}h</span>
+      <span>💰 Precio: ${service.price ? service.price.toFixed(2) : '0.00'}</span>
     </div>
   </div>
 );
@@ -96,6 +99,7 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
         service: selectedService.name,
         serviceId: selectedService.id,
         durationMinutes: selectedService.durationMinutes,
+        servicePrice: selectedService.price || 0,
         notes: "",
         status: "pending"
       };
@@ -110,6 +114,23 @@ export const CreateAppointmentModal = ({ onClose, onSuccess, isAdmin = false }) 
       const appointment = buildAppointment(appointmentData);
 
       const appointmentRef = await addDoc(collection(db, "appointments"), appointment);
+
+      // Track appointment creation in Mixpanel
+      await track(events.APPOINTMENT_CREATED, {
+        appointment_id: appointmentRef.id,
+        service_id: selectedService.id,
+        service_name: selectedService.name,
+        service_price: selectedService.price || 0,
+        appointment_date: appointmentData.date,
+        appointment_time: selectedSlot,
+        user_id: selectedUser.id,
+        user_name: `${selectedUser.firstName} ${selectedUser.lastName}`,
+        user_email: selectedUser.email,
+        had_coupon: !!selectedCoupon,
+        coupon_id: selectedCoupon?.id || null,
+        discount_percentage: selectedCoupon?.discountPercentage || 0,
+        final_price: appointment.finalPrice
+      });
 
       // If a coupon was used, update its status to "used"
       if (selectedCoupon) {

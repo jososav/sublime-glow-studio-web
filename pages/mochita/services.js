@@ -8,15 +8,18 @@ import styles from "../../styles/Services.module.css";
 const ServiceModal = ({ isOpen, onClose, service, onSave }) => {
   const [name, setName] = useState('');
   const [durationMinutes, setDurationMinutes] = useState('');
+  const [price, setPrice] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (service) {
       setName(service.name);
       setDurationMinutes(service.durationMinutes.toString());
+      setPrice(service.price ? service.price.toString() : '');
     } else {
       setName('');
       setDurationMinutes('');
+      setPrice('');
     }
     setError('');
   }, [service]);
@@ -35,9 +38,16 @@ const ServiceModal = ({ isOpen, onClose, service, onSave }) => {
       return;
     }
 
+    const servicePrice = parseFloat(price);
+    if (isNaN(servicePrice) || servicePrice < 0) {
+      setError('El precio debe ser un número válido mayor o igual a 0');
+      return;
+    }
+
     onSave({
       name: name.trim(),
-      durationMinutes: duration
+      durationMinutes: duration,
+      price: servicePrice
     });
   };
 
@@ -71,6 +81,18 @@ const ServiceModal = ({ isOpen, onClose, service, onSave }) => {
               placeholder="Ej: 30"
             />
           </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="price">Precio ($)</label>
+            <input
+              id="price"
+              type="number"
+              min="0"
+              step="0.01"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="Ej: 25.00"
+            />
+          </div>
           <div className={styles.modalActions}>
             <button type="button" className={styles.cancelButton} onClick={onClose}>
               Cancelar
@@ -78,7 +100,7 @@ const ServiceModal = ({ isOpen, onClose, service, onSave }) => {
             <button
               type="submit"
               className={styles.saveButton}
-              disabled={!name.trim() || !durationMinutes}
+              disabled={!name.trim() || !durationMinutes || !price}
             >
               Guardar
             </button>
@@ -190,6 +212,7 @@ const Services = () => {
                 <div className={styles.serviceInfo}>
                   <h3>{service.name}</h3>
                   <p>Duración: {formatDuration(service.durationMinutes)}</p>
+                  <p>Precio: ${service.price ? service.price.toFixed(2) : '0.00'}</p>
                 </div>
                 <div className={styles.serviceActions}>
                   <button

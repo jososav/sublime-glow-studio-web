@@ -123,13 +123,15 @@ export const buildAppointment = ({
   durationMinutes,
   couponId,
   couponAssignmentId,
-  discountPercentage
+  discountPercentage,
+  servicePrice
 }) => {
   if (!userId) throw new Error('El cliente es requerido');
   if (!startTime) throw new Error('La hora es requerida');
   if (!service) throw new Error('El servicio es requerido');
   if (!serviceId) throw new Error('El ID del servicio es requerido');
   if (!durationMinutes) throw new Error('La duración es requerida');
+  if (typeof servicePrice !== 'number') throw new Error('El precio del servicio es requerido');
 
   const appointment = {
     userId,
@@ -144,6 +146,7 @@ export const buildAppointment = ({
     status: status || 'pending',
     serviceId,
     durationMinutes,
+    servicePrice,
     createdAt: new Date().toISOString()
   };
 
@@ -152,6 +155,10 @@ export const buildAppointment = ({
     appointment.couponId = couponId;
     appointment.couponAssignmentId = couponAssignmentId;
     appointment.discountPercentage = discountPercentage;
+    // Calculate final price after discount
+    appointment.finalPrice = servicePrice * (1 - (discountPercentage / 100));
+  } else {
+    appointment.finalPrice = servicePrice;
   }
 
   return appointment;
