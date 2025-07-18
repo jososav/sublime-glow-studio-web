@@ -165,6 +165,52 @@ export const track = async (eventName, properties = {}) => {
   });
 };
 
+// Track revenue using Mixpanel's built-in revenue tracking
+export const trackRevenue = async (amount, properties = {}, customerUserId = null) => {
+  try {
+    // Wait for Mixpanel to be ready
+    await waitForMixpanel();
+    
+    // If customerUserId is provided, temporarily identify as the customer for revenue tracking
+    let originalDistinctId = null;
+    if (customerUserId) {
+      originalDistinctId = mixpanel.get_distinct_id();
+      console.log('Temporarily identifying as customer for revenue tracking:', customerUserId);
+      mixpanel.identify(customerUserId);
+    } else {
+      // Double check we have a distinct_id
+      const distinctId = mixpanel.get_distinct_id();
+      if (!distinctId || distinctId === '') {
+        const deviceId = getDeviceId();
+        console.log('Setting device ID:', deviceId);
+        mixpanel.identify(deviceId);
+      }
+    }
+    
+    // Add device ID to all events
+    const deviceId = getDeviceId();
+    const enhancedProperties = {
+      ...properties,
+      device_id: deviceId,
+      timestamp: new Date().toISOString()
+    };
+    
+    console.log('Tracking revenue:', amount, 'with distinct_id:', mixpanel.get_distinct_id());
+    mixpanel.people.track_charge(amount, enhancedProperties);
+    
+    // Restore original distinct_id if we temporarily changed it
+    if (customerUserId && originalDistinctId) {
+      console.log('Restoring original distinct_id:', originalDistinctId);
+      mixpanel.identify(originalDistinctId);
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Failed to track revenue:', error);
+    return false;
+  }
+};
+
 // Track error events
 export const trackError = (error, context = {}) => {
   safeTrack('Error', {

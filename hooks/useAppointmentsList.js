@@ -21,7 +21,7 @@ import {
 } from "../helpers/emailTemplates";
 import { sendEmail } from "../helpers/sendEmail";
 import { toast } from "react-hot-toast";
-import { track, events } from "../config/mixpanel";
+import { track, trackRevenue, events } from "../config/mixpanel";
 
 const APPOINTMENTS_PER_PAGE = 10;
 
@@ -327,6 +327,27 @@ export const useAppointmentsList = (userId) => {
         user_email: userData?.email || null,
         is_first_finalized: newStatus === "finalized" && previousAppointments?.size === 0
       });
+
+      // Track revenue when appointment is finalized using Mixpanel's built-in revenue tracking
+      if (newStatus === "finalized") {
+        const revenue = appointmentData.finalPrice || appointmentData.servicePrice || 0;
+        await trackRevenue(revenue, {
+          appointment_id: appointmentId,
+          service_id: appointmentData.serviceId,
+          service_name: appointmentData.serviceData?.name,
+          original_service_price: appointmentData.servicePrice || 0,
+          discount_applied: appointmentData.discountPercentage || 0,
+          discount_amount: (appointmentData.servicePrice || 0) * ((appointmentData.discountPercentage || 0) / 100),
+          had_coupon: !!appointmentData.couponId,
+          coupon_id: appointmentData.couponId || null,
+          user_id: userId,
+          user_name: userData ? `${userData.firstName} ${userData.lastName}` : null,
+          user_email: userData?.email || null,
+          appointment_date: appointmentData.date,
+          appointment_time: appointmentData.startTime,
+          is_first_finalized: previousAppointments?.size === 0
+        }, userId); // Pass the customer's user ID for proper revenue attribution
+      }
 
       // Send email notification with admin privileges
       if (appointmentData.email && userData) {
