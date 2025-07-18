@@ -10,6 +10,37 @@ import "react-datepicker/dist/react-datepicker.css";
 import { event, setUserId, setUserProperties } from "../config/analytics";
 import { track, events, trackError } from "../config/mixpanel";
 
+// Error message mapping function
+const getErrorMessage = (errorCode, context = 'login') => {
+  const errorMessages = {
+    // Login errors
+    'auth/invalid-credential': 'Credenciales inválidas. Verifica tu correo electrónico y contraseña.',
+    'auth/user-not-found': 'No existe una cuenta con este correo electrónico.',
+    'auth/wrong-password': 'Contraseña incorrecta.',
+    'auth/too-many-requests': 'Demasiados intentos fallidos. Por favor, intenta más tarde.',
+    'auth/user-disabled': 'Esta cuenta ha sido deshabilitada.',
+    'auth/operation-not-allowed': 'El inicio de sesión con correo electrónico no está habilitado.',
+    'auth/invalid-email': 'Formato de correo electrónico inválido.',
+    'auth/user-token-expired': 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+    'auth/network-request-failed': 'Error de conexión. Verifica tu conexión a internet.',
+    
+    // Signup errors
+    'auth/email-already-in-use': 'Este correo electrónico ya está registrado.',
+    'auth/weak-password': 'La contraseña es demasiado débil. Debe tener al menos 6 caracteres.',
+    'auth/invalid-password': 'La contraseña no cumple con los requisitos de seguridad.',
+    
+    // Password reset errors
+    'auth/user-not-found': 'No existe una cuenta con este correo electrónico.',
+    'auth/invalid-email': 'Formato de correo electrónico inválido.',
+    'auth/missing-email': 'Debes proporcionar un correo electrónico.',
+    
+    // Default error message
+    'default': 'Ha ocurrido un error inesperado. Por favor, intenta de nuevo.'
+  };
+
+  return errorMessages[errorCode] || errorMessages['default'];
+};
+
 const AuthPage = () => {
   const router = useRouter();
   const { user } = useAuthentication();
@@ -92,13 +123,9 @@ const AuthPage = () => {
         email: resetEmail
       });
 
-      if (error.code === 'auth/user-not-found') {
-        setError("No existe una cuenta con este correo electrónico");
-      } else if (error.code === 'auth/invalid-email') {
-        setError("Correo electrónico inválido");
-      } else {
-        setError("Error al enviar el correo de recuperación. Por favor, intenta de nuevo");
-      }
+      // Get meaningful error message based on error code
+      const errorMessage = getErrorMessage(error.code, 'password-reset');
+      setError(errorMessage);
     }
   };
 
@@ -144,13 +171,9 @@ const AuthPage = () => {
         email: form.email
       });
 
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-        setError("Correo electrónico o contraseña incorrectos");
-      } else if (error.code === 'auth/too-many-requests') {
-        setError("Demasiados intentos fallidos. Por favor, intenta más tarde");
-      } else {
-        setError("Error al iniciar sesión. Por favor, intenta de nuevo");
-      }
+      // Get meaningful error message based on error code
+      const errorMessage = getErrorMessage(error.code, 'login');
+      setError(errorMessage);
     }
   };
 
@@ -226,11 +249,9 @@ const AuthPage = () => {
         email: form.email
       });
 
-      if (error.code === 'auth/email-already-in-use') {
-        setError("Este correo electrónico ya está registrado");
-      } else {
-        setError("Error al crear la cuenta. Por favor, intenta de nuevo");
-      }
+      // Get meaningful error message based on error code
+      const errorMessage = getErrorMessage(error.code, 'signup');
+      setError(errorMessage);
     }
   };
 
