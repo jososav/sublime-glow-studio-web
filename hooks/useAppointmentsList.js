@@ -209,6 +209,7 @@ export const useAppointmentsList = (userId) => {
       const userData = userDoc.exists() ? userDoc.data() : null;
 
       // Check previous appointments BEFORE updating status
+      let previousAppointments = null;
       if (newStatus === "finalized") {
         // Check if this is the user's first finalized appointment
         const previousAppointmentsQuery = query(
@@ -216,7 +217,7 @@ export const useAppointmentsList = (userId) => {
           where("userId", "==", userId),
           where("status", "==", "finalized")
         );
-        const previousAppointments = await getDocs(previousAppointmentsQuery);
+        previousAppointments = await getDocs(previousAppointmentsQuery);
 
         // If there are no previous finalized appointments
         if (previousAppointments.size === 0) {
@@ -325,7 +326,7 @@ export const useAppointmentsList = (userId) => {
         user_id: userId,
         user_name: userData ? `${userData.firstName} ${userData.lastName}` : null,
         user_email: userData?.email || null,
-        is_first_finalized: newStatus === "finalized" && previousAppointments?.size === 0
+        is_first_finalized: newStatus === "finalized" && (previousAppointments?.size === 0)
       });
 
       // Track revenue when appointment is finalized using Mixpanel's built-in revenue tracking
